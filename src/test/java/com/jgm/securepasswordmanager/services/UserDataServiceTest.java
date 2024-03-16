@@ -1,5 +1,7 @@
 package com.jgm.securepasswordmanager.services;
 
+import com.jgm.securepasswordmanager.datamodel.User;
+import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +32,31 @@ public class UserDataServiceTest {
         assertTrue(userDataDirectory.exists()); // Directory should exist after creation
 
         // Clean up
-        userDataDirectory.delete(); // Delete the created directory after the test
+//        userDataDirectory.delete(); // Delete the created directory after the test
+
+    }
+
+    @Test
+    public void testWriteUserToFile() {
+        UserDataService theUserDataService = new UserDataService();
+
+        WebsiteCredential theBankCreds = new WebsiteCredential("jpmorgan.com", "jjbutler2004",
+                "secretpass3", "My bank account is super secret");
+
+        WebsiteCredential theFacebookCreds = new WebsiteCredential("facebook.com", "jjb29572",
+                "facebookiscool88", "I have no friends :(");
+
+        User theUser = new User("Jonathan", "Butler", "xxbutler86xx@gmail.com"
+                , "jbutler86", "secretpassword");
+
+        theUser.addCredential(theBankCreds);
+        theUser.addCredential(theFacebookCreds);
+
+        assertTrue(theUserDataService.writeUserToFile(theUser));
+
+
+
+
 
     }
 
