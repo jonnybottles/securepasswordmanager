@@ -2,6 +2,7 @@ package com.jgm.securepasswordmanager.services;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
+import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,11 @@ public class UserDataServiceTest {
         recursiveDelete(userDataDirectory.toPath());
     }
 
-//    @AfterEach
-//    public void tearDown() {
-//        // Clean up after each test by deleting the test directory and its contents
-//        recursiveDelete(userDataDirectory.toPath());
-//    }
+    @AfterEach
+    public void tearDown() {
+        // Clean up after each test by deleting the test directory and its contents
+        recursiveDelete(userDataDirectory.toPath());
+    }
 
     @Test
     public void testCreateUserDataDirectory() {
@@ -69,7 +70,7 @@ public class UserDataServiceTest {
         assertTrue(theUserDataService.writeUserToFile(theUser));
 
         // Load users from file and verify that the list is not empty
-        List<User> users = theUserDataService.loadUsersFromFile();
+        ObservableList<User> users = theUserDataService.loadUsersFromFile();
         assertFalse(users.isEmpty());
 
         // Verify that loaded user details match those of the written user
@@ -92,7 +93,7 @@ public class UserDataServiceTest {
 
         assertTrue(theUserDataService.writeUserToFile(theUser)); // Write the user to file
 
-        List<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
+        ObservableList<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
 
         // Assert that loaded user matches the original user
         assertEquals(1, theLoadedUsers.size());

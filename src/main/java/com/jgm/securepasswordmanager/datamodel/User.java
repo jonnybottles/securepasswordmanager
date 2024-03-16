@@ -1,5 +1,8 @@
 package com.jgm.securepasswordmanager.datamodel;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +13,11 @@ public class User {
     private String emailAddress;
     private String userName;
     private String password;
-    private List<WebsiteCredential> websiteCredentialList;
+    // Transient: Gson will ignore this field during serialization/deserialization
+    private transient ObservableList<WebsiteCredential> websiteCredentialList;
+
+    // This list is used only for Gson serialization/deserialization
+    private List<WebsiteCredential> websiteCredentialNormalList;
 
     // No-arg constructor
     public User() {
@@ -24,7 +31,8 @@ public class User {
         this.emailAddress = emailAddress;
         this.userName = userName;
         this.password = password;
-        this.websiteCredentialList = new ArrayList<>();
+        this.websiteCredentialList = FXCollections.observableArrayList();
+        this.websiteCredentialNormalList = new ArrayList<>();
     }
 
 
@@ -69,11 +77,32 @@ public class User {
         this.password = password;
     }
 
-    public List<WebsiteCredential> getWebsiteCredentialList() {
+
+//    // Gson uses this to serialize/deserialize
+//    public List<WebsiteCredential> getWebsiteCredentialNormalList() {
+//        return new ArrayList<>(websiteCredentialList);
+//    }
+//
+//    public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
+//        this.websiteCredentialList = FXCollections.observableArrayList(websiteCredentialNormalList);
+//    }
+
+    public List<WebsiteCredential> getWebsiteCredentialNormalList() {
+        return websiteCredentialNormalList; // This should return the normal list, not the observable list
+    }
+
+    public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
+        this.websiteCredentialNormalList = websiteCredentialNormalList; // This should set the normal list, not convert it to an observable list
+        this.websiteCredentialList = FXCollections.observableArrayList(websiteCredentialNormalList); // Convert the normal list to an observable list for runtime use
+    }
+
+
+    // Runtime methods use this
+    public ObservableList<WebsiteCredential> getWebsiteCredentialList() {
         return websiteCredentialList;
     }
 
-    public void setWebsiteCredentialList(List<WebsiteCredential> websiteCredentialList) {
+    public void setWebsiteCredentialList(ObservableList<WebsiteCredential> websiteCredentialList) {
         this.websiteCredentialList = websiteCredentialList;
     }
 

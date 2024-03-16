@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -51,36 +53,42 @@ public class UserDataService {
         }
 
         String userDataFilename = USERS_DIRECTORY_PATH + File.separator + user.getUserName() + ".json";
+
+        // Convert ObservableList to List for Gson serialization
+        List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialList());
+        user.setWebsiteCredentialNormalList(credentialList); // Set the normal list for serialization
+
+        encryptUserData(user); // Encrypt after setting the websiteCredentialNormalList
+
         try (Writer writer = new FileWriter(userDataFilename)) {
-
-            encryptUserData(user);
-
+            // Serialize the user with the normal list
             theGson.toJson(user, writer);
             return true;
-
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-
     }
 
-    public List<User> loadUsersFromFile() {
-        List<User> users = new ArrayList<>();
+    public ObservableList<User> loadUsersFromFile() {
+        ObservableList<User> users = FXCollections.observableArrayList();
         File directory = new File(USERS_DIRECTORY_PATH);
 
-        // Ensure the directory exists and is a directory
         if (directory.exists() && directory.isDirectory()) {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
 
             if (files != null) {
                 for (File file : files) {
-                    // Try-with-resources to ensure the FileReader is closed after use
                     try (Reader reader = new FileReader(file)) {
-                        // This TypeToken gets around generic type erasure
-                        // by allowing Gson to know the specific generic type to deserialize to
-                        User user = theGson.fromJson(reader, new TypeToken<User>() {}.getType());
-                        decryptUserData(user);
+                        User user = theGson.fromJson(reader, User.class);
+
+                        decryptUserData(user); // Decrypt before setting the observable list
+
+                        // Convert List back to ObservableList after deserialization
+                        ObservableList<WebsiteCredential> observableList =
+                                FXCollections.observableArrayList(user.getWebsiteCredentialNormalList());
+                        user.setWebsiteCredentialList(observableList); // Set the observable list
+
                         users.add(user);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -90,6 +98,7 @@ public class UserDataService {
         }
         return users;
     }
+
 
     private void encryptUserData(User user) {
         user.setPassword(theEncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
@@ -103,7 +112,7 @@ public class UserDataService {
 
     private void decryptUserData(User user) {
         user.setPassword(theEncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
-        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialList();
+        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialNormalList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
             webSiteCred.setWebSitePassword(theEncryptionService.decrypt(webSiteCred.getWebSitePassword(),

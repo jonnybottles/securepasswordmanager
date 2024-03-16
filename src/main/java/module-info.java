@@ -6,6 +6,7 @@ module com.jgm.securepasswordmanager {
 
     opens com.jgm.securepasswordmanager to javafx.fxml;
     opens com.jgm.securepasswordmanager.datamodel to com.google.gson;
+    exports com.jgm.securepasswordmanager.datamodel;
 
     exports com.jgm.securepasswordmanager;
     exports com.jgm.securepasswordmanager.controllers;
