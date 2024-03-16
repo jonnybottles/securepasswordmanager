@@ -15,8 +15,11 @@ public class EncryptionService {
     private static final int KEY_LENGTH = 256;
     private static final int ITERATION_COUNT = 65536;
 
+    public EncryptionService() {
+    }
+
     // Encrypts a given string using a secret key and salt.
-    public static String encrypt(String strToEncrypt, String secretKey, String salt) {
+    public String encrypt(String strToEncrypt, String secretKey, String salt) {
 
         try {
 
@@ -47,7 +50,7 @@ public class EncryptionService {
     }
 
     // Decrypts a given string using a secret key and salt.
-    public static String decrypt(String strToDecrypt, String secretKey, String salt) {
+    public String decrypt(String strToDecrypt, String secretKey, String salt) {
 
         try {
 

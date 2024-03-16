@@ -5,11 +5,10 @@ import com.jgm.securepasswordmanager.datamodel.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataService {
@@ -53,6 +52,9 @@ public class UserDataService {
 
         String userDataFilename = USERS_DIRECTORY_PATH + File.separator + user.getUserName() + ".json";
         try (Writer writer = new FileWriter(userDataFilename)) {
+
+            encryptUserData(user);
+
             theGson.toJson(user, writer);
             return true;
 
@@ -63,12 +65,45 @@ public class UserDataService {
 
     }
 
-//    public List<User> loadUsersFromFile() {
-//
-//    }
+    public List<User> loadUsersFromFile() {
+        List<User> users = new ArrayList<>();
+        File directory = new File(USERS_DIRECTORY_PATH);
 
+        // Ensure the directory exists and is a directory
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
 
+            if (files != null) {
+                for (File file : files) {
+                    // Try-with-resources to ensure the FileReader is closed after use
+                    try (Reader reader = new FileReader(file)) {
+                        // This TypeToken gets around generic type erasure
+                        // by allowing Gson to know the specific generic type to deserialize to
+                        User user = theGson.fromJson(reader, new TypeToken<User>() {}.getType());
+                        users.add(user);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return users;
+    }
 
+    private void encryptUserData(User user) {
+        user.setPassword(theEncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
+        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialList();
 
+        for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
+            webSiteCred.setWebSitePassword(theEncryptionService.encrypt(webSiteCred.getWebSitePassword(),
+                    "thesecretkey", "somerandomsalt"));
+        }
+    }
 
 }
+
+
+
+
+
+

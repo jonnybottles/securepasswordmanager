@@ -12,6 +12,12 @@ public class User {
     private String password;
     private List<WebsiteCredential> websiteCredentialList;
 
+    // No-arg constructor
+    public User() {
+        // Chain this constructor to the existing one, providing default values
+        this("", "", "", "", "");
+    }
+
     public User(String firstName, String lastName, String emailAddress, String userName, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -20,6 +26,8 @@ public class User {
         this.password = password;
         this.websiteCredentialList = new ArrayList<>();
     }
+
+
 
     public String getFirstName() {
         return firstName;
