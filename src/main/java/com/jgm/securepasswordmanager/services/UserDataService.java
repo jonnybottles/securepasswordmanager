@@ -80,6 +80,7 @@ public class UserDataService {
                         // This TypeToken gets around generic type erasure
                         // by allowing Gson to know the specific generic type to deserialize to
                         User user = theGson.fromJson(reader, new TypeToken<User>() {}.getType());
+                        decryptUserData(user);
                         users.add(user);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -96,6 +97,16 @@ public class UserDataService {
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
             webSiteCred.setWebSitePassword(theEncryptionService.encrypt(webSiteCred.getWebSitePassword(),
+                    "thesecretkey", "somerandomsalt"));
+        }
+    }
+
+    private void decryptUserData(User user) {
+        user.setPassword(theEncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
+        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialList();
+
+        for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
+            webSiteCred.setWebSitePassword(theEncryptionService.decrypt(webSiteCred.getWebSitePassword(),
                     "thesecretkey", "somerandomsalt"));
         }
     }

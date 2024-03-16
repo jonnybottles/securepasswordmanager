@@ -92,4 +92,38 @@ public class User {
         return websiteCredentialList.remove(credToRemove);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(userName, that.userName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userName);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("User:").append("\n")
+                .append(" - firstName='").append(firstName).append("\n")
+                .append(" - lastName='").append(lastName).append("\n")
+                .append(" - emailAddress='").append(emailAddress).append("\n")
+                .append(" - userName='").append(userName).append("\n")
+                .append(" - password='").append(password).append("\n")
+                .append(" - Website Credentials:\n\n");
+
+        // Append each WebsiteCredential's string representation
+        int count = 1;
+        for (WebsiteCredential credential : websiteCredentialList) {
+            sb.append("Website Credential ").append(count).append(":\n");
+            sb.append(credential.toString()).append("\n");
+            count +=1;
+        }
+        return sb.toString();
+    }
+
 }

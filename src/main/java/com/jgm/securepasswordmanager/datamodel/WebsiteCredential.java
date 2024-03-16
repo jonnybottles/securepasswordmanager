@@ -61,4 +61,13 @@ public class WebsiteCredential {
     public int hashCode() {
         return Objects.hash(webSiteName, webSiteUserName);
     }
+
+    @Override
+    public String toString() {
+        return
+                " - webSiteName='" + webSiteName + '\'' + "\n" +
+                " - webSiteUserName='" + webSiteUserName + '\'' + "\n" +
+                " - webSitePassword='" + webSitePassword + '\'' + "\n" +
+                " - notes='" + notes + '\'' + "\n";
+    }
 }

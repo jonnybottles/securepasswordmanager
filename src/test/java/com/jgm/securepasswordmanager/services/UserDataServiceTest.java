@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,6 +77,41 @@ public class UserDataServiceTest {
         assertEquals(theUser.getUserName(), loadedUser.getUserName());
     }
 
+    @Test
+    public void testEncryptionAndDecryptionOfPasswords() {
+        // Prepare and write a user to file for testing load functionality
+        User theUser = prepareUserData(); // Prepare user data for testing
+
+        String clearTextUserPassword = theUser.getPassword(); // Get the clear text password
+
+        List<String> clearTextWebSitePasswords = populatePasswordsList(theUser); // Get clear text website passwords
+
+        // Print user information before writing to file
+        System.out.println("User information before writing to file:");
+        System.out.println(theUser);
+
+        assertTrue(theUserDataService.writeUserToFile(theUser)); // Write the user to file
+
+        List<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
+
+        // Assert that loaded user matches the original user
+        assertEquals(1, theLoadedUsers.size());
+        User loadedUser = theLoadedUsers.get(0);
+        assertEquals(theUser, loadedUser);
+
+        // Print user information after loading from file
+        System.out.println("\nUser information after loading from file:");
+        System.out.println(loadedUser);
+
+        // Check if the user's clear text password matches after decryption
+        String loadedUserClearTextPassword = loadedUser.getPassword();
+        assertEquals(clearTextUserPassword, loadedUserClearTextPassword);
+
+        // Check if the website passwords match after decryption
+        List<String> loadedUserWebSitePasswords = populatePasswordsList(loadedUser);
+        assertEquals(clearTextWebSitePasswords, loadedUserWebSitePasswords);
+    }
+
     // Helper method to recursively delete a directory and its contents
     private static void recursiveDelete(Path path) {
         if (Files.exists(path)) {
@@ -103,5 +139,17 @@ public class UserDataServiceTest {
         theUser.addCredential(theFacebookCreds);
 
         return theUser;
+    }
+
+    private List<String> populatePasswordsList(User user) {
+        List<String> theStringPasswordList = new ArrayList<>();
+        List<WebsiteCredential> theWebCredList = user.getWebsiteCredentialList();
+
+        for (WebsiteCredential webSiteCred: theWebCredList) {
+            theStringPasswordList.add(webSiteCred.getWebSitePassword());
+        }
+
+        return theStringPasswordList;
+
     }
 }
