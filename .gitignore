@@ -61,3 +61,4 @@ pom.xml.next
 *.zip
 *.tar.gz
 .idea/
+user_data/
