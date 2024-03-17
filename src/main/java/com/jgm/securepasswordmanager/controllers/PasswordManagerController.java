@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PasswordManagerController {
@@ -43,12 +45,12 @@ public class PasswordManagerController {
     public void initialize() {
         theUserDataService = new UserDataService();
 
-        setUser();
+        loadTestUserAndWebsites();
 
         createDeleteContextMenu();
 
         //Bind the TableView to the list of contacts
-        tableView.setItems(theLoadedUser.getWebsiteCredentialList());
+        tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
 
         // Assuming you have 4 columns, and you want them to take up equal space
 //        double width = tableView.widthProperty().divide(4).doubleValue();
@@ -92,32 +94,6 @@ public class PasswordManagerController {
 
     // Remove this after integrating with the other branches
     // this is only being used for testing.
-    public void setUser() {
-        // Create credentials
-
-        WebsiteCredential cred1 = new WebsiteCredential("google.com", "userGoogle", "password123", "My Google account.");
-        WebsiteCredential cred2 = new WebsiteCredential("youtube.com", "userYouTube", "pass456", "My YouTube account.");
-        WebsiteCredential cred3 = new WebsiteCredential("amazon.com", "userAmazon", "amz789", "Shopping account.");
-        WebsiteCredential cred4 = new WebsiteCredential("twitter.com", "userTwitter", "tweet987", "My Twitter handle.");
-        WebsiteCredential cred5 = new WebsiteCredential("linkedin.com", "userLinkedIn", "link321", "Professional profile.");
-        WebsiteCredential cred6 = new WebsiteCredential("netflix.com", "userNetflix", "netflixx123", "Binge-watching account.");
-        WebsiteCredential cred7 = new WebsiteCredential("spotify.com", "userSpotify", "spoti456", "Music streaming service account.");
-        WebsiteCredential cred8 = new WebsiteCredential("jpmorgan.com", "jjbutler2004", "secretpass3", "My bank account is super secret");
-        WebsiteCredential cred9 = new WebsiteCredential("facebook.com", "jjb29572", "facebookiscool88", "I have no friends :(");
-
-        // Create user and add credentials
-        theLoadedUser = new User("Jonathan", "Butler", "xxbutler86xx@gmail.com", "jbutler86", "secretpassword");
-        theLoadedUser.addCredential(cred1);
-        theLoadedUser.addCredential(cred2);
-        theLoadedUser.addCredential(cred3);
-        theLoadedUser.addCredential(cred4);
-        theLoadedUser.addCredential(cred5);
-        theLoadedUser.addCredential(cred6);
-        theLoadedUser.addCredential(cred7);
-        theLoadedUser.addCredential(cred8); // Assuming cred8 is theBankCreds
-        theLoadedUser.addCredential(cred9); // Assuming cred9 is theFacebookCreds
-
-    }
 
     // Provides right click delete functionality
     public void deleteItem(WebsiteCredential websiteToDelete) {
@@ -159,10 +135,10 @@ public class PasswordManagerController {
             AddPasswordController addPasswordController = fxmlLoader.getController();
             WebsiteCredential newItem = addPasswordController.processResults();
             //Bind the TableView to the list of contacts
-            tableView.setItems(theLoadedUser.getWebsiteCredentialList());
+            tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
 
             //Find the index of the new contact
-            int newIndex = theLoadedUser.getWebsiteCredentialList().indexOf(newItem);
+            int newIndex = theLoadedUser.getWebsiteCredentialObservablelList().indexOf(newItem);
             tableView.getSelectionModel().select(newIndex);
 
             System.out.println("OK pressed");
@@ -237,5 +213,51 @@ public class PasswordManagerController {
 
         }
     }
+
+    public void loadTestUserAndWebsites() {
+        // Create credentials
+
+        List<WebsiteCredential> credentialList = new ArrayList<>();
+
+        credentialList.add(new WebsiteCredential("google.com", "userGoogle", "password123", "My Google account."));
+        credentialList.add(new WebsiteCredential("youtube.com", "userYouTube", "pass456", "My YouTube account."));
+        credentialList.add(new WebsiteCredential("amazon.com", "userAmazon", "amz789", "Shopping account."));
+        credentialList.add(new WebsiteCredential("twitter.com", "userTwitter", "tweet987", "My Twitter handle."));
+        credentialList.add(new WebsiteCredential("linkedin.com", "userLinkedIn", "link321", "Professional profile."));
+        credentialList.add(new WebsiteCredential("netflix.com", "userNetflix", "netflixx123", "Binge-watching account."));
+        credentialList.add(new WebsiteCredential("spotify.com", "userSpotify", "spoti456", "Music streaming service account."));
+        credentialList.add(new WebsiteCredential("jpmorgan.com", "jjbutler2004", "secretpass3", "My bank account is super secret"));
+        credentialList.add(new WebsiteCredential("facebook.com", "jjb29572", "facebookiscool88", "I have no friends :("));
+        credentialList.add(new WebsiteCredential("github.com", "octocatDev", "devPass1234", "My development repositories."));
+        credentialList.add(new WebsiteCredential("stackoverflow.com", "codeWizard99", "stackOverFlow321", "Where I ask and answer tech questions."));
+        credentialList.add(new WebsiteCredential("paypal.com", "paypalUser2024", "securePay123", "My main payment service."));
+        credentialList.add(new WebsiteCredential("ebay.com", "auctionMaster", "bidWin2024!", "Where I sell and buy stuff."));
+        credentialList.add(new WebsiteCredential("dropbox.com", "cloudStorageMaster", "dropItLikeItsHot$", "For all my important documents."));
+        credentialList.add(new WebsiteCredential("twitch.tv", "streamerElite", "watchMeGame123", "My gaming channel."));
+        credentialList.add(new WebsiteCredential("airbnb.com", "travelJunkie1986", "wanderlustLife$", "My travel stays."));
+        credentialList.add(new WebsiteCredential("pinterest.com", "pinnerCreative", "pinningAway987", "My board of ideas."));
+        credentialList.add(new WebsiteCredential("instagram.com", "instaUser_photog", "picturePerfect86", "My photo sharing profile."));
+        credentialList.add(new WebsiteCredential("tumblr.com", "bloggerPoet", "wordsOfWisdom!", "Where I express myself."));
+        credentialList.add(new WebsiteCredential("microsoft.com", "techUser86", "windowsExpert321", "My software licenses."));
+        credentialList.add(new WebsiteCredential("imdb.com", "movieBuff2024", "cinemaLover!", "My movie lists."));
+        credentialList.add(new WebsiteCredential("tripadvisor.com", "worldExplorer", "adventureAwaits!", "My travel reviews."));
+        credentialList.add(new WebsiteCredential("wikipedia.org", "factFinder", "knowledgeIsPower!", "My edit contributions."));
+        credentialList.add(new WebsiteCredential("flickr.com", "shutterbugLife", "snapSnap1234", "My photography portfolio."));
+        credentialList.add(new WebsiteCredential("vimeo.com", "videoGrapher", "shootEditUpload!", "My video creations."));
+        credentialList.add(new WebsiteCredential("etsy.com", "craftyArtist", "handMadeWithLove", "Where I sell my crafts."));
+        credentialList.add(new WebsiteCredential("booking.com", "frequentFlyer", "travelTheWorld123", "Where I plan my trips."));
+        credentialList.add(new WebsiteCredential("disneyplus.com", "disneyFanatic", "magicKingdom!", "My streaming for classics."));
+        credentialList.add(new WebsiteCredential("hulu.com", "seriesAddict", "streamBinge456", "For all my favorite series."));
+        credentialList.add(new WebsiteCredential("expedia.com", "travelDealHunter", "vacationSavings!", "For my travel booking deals."));
+
+        // Create user and add credentials
+        theLoadedUser = new User("Jonathan", "Butler", "xxbutler86xx@gmail.com", "jbutler86", "secretpassword");
+
+        for (WebsiteCredential cred: credentialList) {
+            theLoadedUser.addCredential(cred);
+        }
+
+    }
+
 
 }

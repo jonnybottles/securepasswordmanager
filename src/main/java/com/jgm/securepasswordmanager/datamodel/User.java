@@ -14,7 +14,7 @@ public class User {
     private String userName;
     private String password;
     // Transient: Gson will ignore this field during serialization/deserialization
-    private transient ObservableList<WebsiteCredential> websiteCredentialList;
+    private transient ObservableList<WebsiteCredential> websiteCredentialObservablelList;
 
     // This list is used only for Gson serialization/deserialization
     private List<WebsiteCredential> websiteCredentialNormalList;
@@ -31,7 +31,7 @@ public class User {
         this.emailAddress = emailAddress;
         this.userName = userName;
         this.password = password;
-        this.websiteCredentialList = FXCollections.observableArrayList();
+        this.websiteCredentialObservablelList = FXCollections.observableArrayList();
         this.websiteCredentialNormalList = new ArrayList<>();
     }
 
@@ -80,11 +80,11 @@ public class User {
 
 //    // Gson uses this to serialize/deserialize
 //    public List<WebsiteCredential> getWebsiteCredentialNormalList() {
-//        return new ArrayList<>(websiteCredentialList);
+//        return new ArrayList<>(websiteCredentialObservablelList);
 //    }
 //
 //    public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
-//        this.websiteCredentialList = FXCollections.observableArrayList(websiteCredentialNormalList);
+//        this.websiteCredentialObservablelList = FXCollections.observableArrayList(websiteCredentialNormalList);
 //    }
 
     public List<WebsiteCredential> getWebsiteCredentialNormalList() {
@@ -93,32 +93,32 @@ public class User {
 
     public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
         this.websiteCredentialNormalList = websiteCredentialNormalList; // This should set the normal list, not convert it to an observable list
-        this.websiteCredentialList = FXCollections.observableArrayList(websiteCredentialNormalList); // Convert the normal list to an observable list for runtime use
+        this.websiteCredentialObservablelList = FXCollections.observableArrayList(websiteCredentialNormalList); // Convert the normal list to an observable list for runtime use
     }
 
 
     // Runtime methods use this
-    public ObservableList<WebsiteCredential> getWebsiteCredentialList() {
-        return websiteCredentialList;
+    public ObservableList<WebsiteCredential> getWebsiteCredentialObservablelList() {
+        return websiteCredentialObservablelList;
     }
 
-    public void setWebsiteCredentialList(ObservableList<WebsiteCredential> websiteCredentialList) {
-        this.websiteCredentialList = websiteCredentialList;
+    public void setWebsiteCredentialObservablelList(ObservableList<WebsiteCredential> websiteCredentialObservablelList) {
+        this.websiteCredentialObservablelList = websiteCredentialObservablelList;
     }
 
 
     public boolean addCredential(WebsiteCredential newCred) {
-        for (WebsiteCredential existingCred : websiteCredentialList) {
+        for (WebsiteCredential existingCred : websiteCredentialObservablelList) {
             if (existingCred.equals(newCred)) {
                 return false;
             }
         }
-        websiteCredentialList.add(newCred);
+        websiteCredentialObservablelList.add(newCred);
         return true;
     }
 
     public boolean removeCredential(WebsiteCredential credToRemove) {
-        return websiteCredentialList.remove(credToRemove);
+        return websiteCredentialObservablelList.remove(credToRemove);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class User {
 
         // Append each WebsiteCredential's string representation
         int count = 1;
-        for (WebsiteCredential credential : websiteCredentialList) {
+        for (WebsiteCredential credential : websiteCredentialObservablelList) {
             sb.append("Website Credential ").append(count).append(":\n");
             sb.append(credential.toString()).append("\n");
             count +=1;

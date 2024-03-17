@@ -4,7 +4,6 @@ import com.jgm.securepasswordmanager.datamodel.User;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,7 +54,7 @@ public class UserDataService {
         String userDataFilename = USERS_DIRECTORY_PATH + File.separator + user.getUserName() + ".json";
 
         // Convert ObservableList to List for Gson serialization
-        List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialList());
+        List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialObservablelList());
         user.setWebsiteCredentialNormalList(credentialList); // Set the normal list for serialization
 
         encryptUserData(user); // Encrypt after setting the websiteCredentialNormalList
@@ -70,8 +69,8 @@ public class UserDataService {
         }
     }
 
-    public ObservableList<User> loadUsersFromFile() {
-        ObservableList<User> users = FXCollections.observableArrayList();
+    public List<User> loadUsersFromFile() {
+        List<User> users = new ArrayList<>();
         File directory = new File(USERS_DIRECTORY_PATH);
 
         if (directory.exists() && directory.isDirectory()) {
@@ -87,7 +86,7 @@ public class UserDataService {
                         // Convert List back to ObservableList after deserialization
                         ObservableList<WebsiteCredential> observableList =
                                 FXCollections.observableArrayList(user.getWebsiteCredentialNormalList());
-                        user.setWebsiteCredentialList(observableList); // Set the observable list
+                        user.setWebsiteCredentialObservablelList(observableList); // Set the observable list
 
                         users.add(user);
                     } catch (IOException e) {
@@ -98,11 +97,40 @@ public class UserDataService {
         }
         return users;
     }
+//
+//    public ObservableList<User> loadUsersFromFile() {
+//        ObservableList<User> users = FXCollections.observableArrayList();
+//        File directory = new File(USERS_DIRECTORY_PATH);
+//
+//        if (directory.exists() && directory.isDirectory()) {
+//            File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
+//
+//            if (files != null) {
+//                for (File file : files) {
+//                    try (Reader reader = new FileReader(file)) {
+//                        User user = theGson.fromJson(reader, User.class);
+//
+//                        decryptUserData(user); // Decrypt before setting the observable list
+//
+//                        // Convert List back to ObservableList after deserialization
+//                        ObservableList<WebsiteCredential> observableList =
+//                                FXCollections.observableArrayList(user.getWebsiteCredentialNormalList());
+//                        user.setWebsiteCredentialObservablelList(observableList); // Set the observable list
+//
+//                        users.add(user);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//        return users;
+//    }
 
 
     private void encryptUserData(User user) {
         user.setPassword(theEncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
-        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialList();
+        List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialObservablelList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
             webSiteCred.setWebSitePassword(theEncryptionService.encrypt(webSiteCred.getWebSitePassword(),

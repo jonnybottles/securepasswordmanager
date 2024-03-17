@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,7 +143,7 @@ public class UserDataServiceTest {
 
     private List<String> populatePasswordsList(User user) {
         List<String> theStringPasswordList = new ArrayList<>();
-        List<WebsiteCredential> theWebCredList = user.getWebsiteCredentialList();
+        List<WebsiteCredential> theWebCredList = user.getWebsiteCredentialObservablelList();
 
         for (WebsiteCredential webSiteCred: theWebCredList) {
             theStringPasswordList.add(webSiteCred.getWebSitePassword());
