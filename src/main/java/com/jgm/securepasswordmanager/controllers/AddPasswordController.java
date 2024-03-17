@@ -30,12 +30,12 @@ public class AddPasswordController {
 
     public WebsiteCredential processResults() {
         String websiteName = websiteNameField.getText().trim();
-        String websiteUserName = webSitePasswordField.getText().trim();
+        String websiteUserName = websiteUserNameField.getText().trim();
         String websitePassword = webSitePasswordField.getText().trim();
         String notes = notesArea.getText().trim();
 
         WebsiteCredential newWebsiteCredential = new WebsiteCredential(websiteName, websiteUserName, websitePassword, notes);
-        theLoadedUser.addCredential(newWebsiteCredential);
+//        theLoadedUser.addCredential(newWebsiteCredential);
         return newWebsiteCredential;
     }
 

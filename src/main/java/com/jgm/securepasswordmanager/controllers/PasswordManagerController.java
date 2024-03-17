@@ -49,7 +49,7 @@ public class PasswordManagerController {
 
         createDeleteContextMenu();
 
-        //Bind the TableView to the list of contacts
+        //Bind the TableView to the list of websitecredentials
         tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
 
         // Assuming you have 4 columns, and you want them to take up equal space
@@ -69,7 +69,7 @@ public class PasswordManagerController {
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(actionEvent -> {
             WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
-            deleteItem(websiteToDelete);
+            rightClickDeleteWebsiteCredential(websiteToDelete);
         });
 
         listContextMenu.getItems().add(deleteMenuItem); // Add this line
@@ -96,12 +96,13 @@ public class PasswordManagerController {
     // this is only being used for testing.
 
     // Provides right click delete functionality
-    public void deleteItem(WebsiteCredential websiteToDelete) {
+    public void rightClickDeleteWebsiteCredential(WebsiteCredential websiteToDelete) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Contact Item");
-        alert.setHeaderText("Delete Website: " + websiteToDelete.getWebSiteName() + " " + websiteToDelete.getWebSiteUserName()
-        + " credentials?");
-        alert.setContentText("Are you sure? Press OK to confirm, or cancel to back out");
+        alert.setTitle("Delete Website Credential");
+        alert.setHeaderText("Are you sure you want to delete the selected credentials: \n\n" +
+                "Website: " + websiteToDelete.getWebSiteName() + "\n" +
+                "User Name: " + websiteToDelete.getWebSiteUserName());
+        alert.setContentText("Are you sure?\n");
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -110,14 +111,14 @@ public class PasswordManagerController {
     }
 
     @FXML
-    public void showAddItemDialog() {
+    public void onAddWebsiteCredentialClicked() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
-        dialog.setTitle("Add New Contact");
-        dialog.setHeaderText("This is some other instructions");
+        dialog.setTitle("Add New Website Credential");
+        dialog.setHeaderText("Please enter in the information for your new credentials.");
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("add_password.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("/com/jgm/securepasswordmanager/add_password.fxml"));
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
@@ -133,22 +134,24 @@ public class PasswordManagerController {
 
         if(result.isPresent() && result.get() == ButtonType.OK) {
             AddPasswordController addPasswordController = fxmlLoader.getController();
+//            addPasswordController.setUser(theLoadedUser);
             WebsiteCredential newItem = addPasswordController.processResults();
-            //Bind the TableView to the list of contacts
+
+            theLoadedUser.addCredential(newItem);
+            //Bind the TableView to the list of website credentials
             tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
 
-            //Find the index of the new contact
+            //Find the index of the new website credential
             int newIndex = theLoadedUser.getWebsiteCredentialObservablelList().indexOf(newItem);
             tableView.getSelectionModel().select(newIndex);
 
-            System.out.println("OK pressed");
         }
 
     }
 
 
     @FXML
-    public void showEditWebsiteCredentialDialog() {
+    public void onEditWebsiteCredentialClicked() {
         WebsiteCredential selectedWebsiteCredential = tableView.getSelectionModel().getSelectedItem();
         if(selectedWebsiteCredential == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -181,33 +184,34 @@ public class PasswordManagerController {
         Optional<ButtonType> result = dialog.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK) {
             theAddPasswordController.updateWebsiteCredential(selectedWebsiteCredential);
-            // TODO Call Edit Contact in data services here once created
+            // TODO Call Edit website in userdata services here once created
             // or just overwrite the file which would be easier
         }
     }
 
-    public void deleteContact() {
+    public void onDeleteWebsiteCredential() {
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
         if(selectedCredential == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("No Contact Selected");
+            alert.setTitle("No Website Credential Selected");
             alert.setHeaderText(null);
-            alert.setContentText("PLease select the contact you want to delete.");
+            alert.setContentText("PLease select the website credential you want to delete.");
             alert.showAndWait();
             return;
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Contact");
+        alert.setTitle("Delete Credential");
         alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to delete the selected website credential: " +
-                selectedCredential.getWebSiteName() + " " + selectedCredential.getWebSiteUserName());
+        alert.setContentText("Are you sure you want to delete the selected credentials: \n" +
+                "Website: " + selectedCredential.getWebSiteName() + "\n" +
+                "User Name: " + selectedCredential.getWebSiteUserName());
 
         Optional<ButtonType> result = alert.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK) {
             theLoadedUser.removeCredential(selectedCredential);
 
-            // TODO Call Delete Contact in data services here once created
+            // TODO Call Delete website credential in data services here once created
             // TODO Or just overwrite the file which would be easier
 
 
