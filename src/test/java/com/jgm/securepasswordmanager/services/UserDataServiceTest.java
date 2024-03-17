@@ -69,7 +69,7 @@ public class UserDataServiceTest {
         assertTrue(theUserDataService.writeUserToFile(theUser));
 
         // Load users from file and verify that the list is not empty
-        ObservableList<User> users = theUserDataService.loadUsersFromFile();
+        List<User> users = theUserDataService.loadUsersFromFile();
         assertFalse(users.isEmpty());
 
         // Verify that loaded user details match those of the written user
@@ -92,7 +92,7 @@ public class UserDataServiceTest {
 
         assertTrue(theUserDataService.writeUserToFile(theUser)); // Write the user to file
 
-        ObservableList<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
+        List<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
 
         // Assert that loaded user matches the original user
         assertEquals(1, theLoadedUsers.size());

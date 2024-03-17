@@ -77,27 +77,20 @@ public class User {
         this.password = password;
     }
 
-
-//    // Gson uses this to serialize/deserialize
-//    public List<WebsiteCredential> getWebsiteCredentialNormalList() {
-//        return new ArrayList<>(websiteCredentialObservablelList);
-//    }
-//
-//    public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
-//        this.websiteCredentialObservablelList = FXCollections.observableArrayList(websiteCredentialNormalList);
-//    }
-
+    // This method returns a normal website Credential list, used for writing to Json
     public List<WebsiteCredential> getWebsiteCredentialNormalList() {
-        return websiteCredentialNormalList; // This should return the normal list, not the observable list
+        return websiteCredentialNormalList;
     }
 
+    // This method sets the normal website Credential list that is loaded to from the Json users file and
+    // copies the normal list to an observable list for runtime use
     public void setWebsiteCredentialNormalList(List<WebsiteCredential> websiteCredentialNormalList) {
-        this.websiteCredentialNormalList = websiteCredentialNormalList; // This should set the normal list, not convert it to an observable list
-        this.websiteCredentialObservablelList = FXCollections.observableArrayList(websiteCredentialNormalList); // Convert the normal list to an observable list for runtime use
+        this.websiteCredentialNormalList = websiteCredentialNormalList;
+        this.websiteCredentialObservablelList = FXCollections.observableArrayList(websiteCredentialNormalList);
     }
 
 
-    // Runtime methods use this
+    // Returns the observable credential list, used during runtime operations
     public ObservableList<WebsiteCredential> getWebsiteCredentialObservablelList() {
         return websiteCredentialObservablelList;
     }
@@ -107,6 +100,7 @@ public class User {
     }
 
 
+    // Adds a credential to the users observable credential list
     public boolean addCredential(WebsiteCredential newCred) {
         for (WebsiteCredential existingCred : websiteCredentialObservablelList) {
             if (existingCred.equals(newCred)) {
@@ -117,10 +111,13 @@ public class User {
         return true;
     }
 
+    // Removes a credential from the users observable credential list
     public boolean removeCredential(WebsiteCredential credToRemove) {
         return websiteCredentialObservablelList.remove(credToRemove);
     }
 
+    // Overrides the default equals method to allow for comparing of two user objects
+    // Two users are considered equal if they have the same username
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -129,6 +126,7 @@ public class User {
         return Objects.equals(userName, that.userName);
     }
 
+    // Required to implement the equals override method
     @Override
     public int hashCode() {
         return Objects.hash(userName);

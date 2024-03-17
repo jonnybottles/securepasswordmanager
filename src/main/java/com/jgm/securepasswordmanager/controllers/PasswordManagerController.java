@@ -4,6 +4,7 @@ import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.UserDataService;
 import javafx.beans.binding.Bindings;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -42,6 +43,7 @@ public class PasswordManagerController {
     private UserDataService theUserDataService;
 
 
+    // Initializes all classes / data
     public void initialize() {
         theUserDataService = new UserDataService();
 
@@ -49,34 +51,40 @@ public class PasswordManagerController {
 
         createDeleteContextMenu();
 
-        //Bind the TableView to the list of websitecredentials
+        //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
         tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-
-        // Assuming you have 4 columns, and you want them to take up equal space
-//        double width = tableView.widthProperty().divide(4).doubleValue();
-
-//        // Bind the width of each column to a quarter of the table's width
-//        firstNameCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
-//        lastNameCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
-//        phoneNumberCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
-//        notesCol.prefWidthProperty().bind(tableView.widthProperty().divide(4));
-
 
     }
 
+    // Used by the LoginController class to pass in the loaded user
+    public void setUser(User theLoadedUser) {
+        this.theLoadedUser = theLoadedUser;
+    }
+
+    // Sets up a context menu on the TableView which will allow the user to
+    // delete a credential via a right click option.
     private void createDeleteContextMenu() {
+
         listContextMenu = new ContextMenu();
+        // Create a delete option for the menu
         MenuItem deleteMenuItem = new MenuItem("Delete");
+
+        // Set the action to perform when the delete option is selected
         deleteMenuItem.setOnAction(actionEvent -> {
+            // Get the selected item from the TableView
             WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
-            rightClickDeleteWebsiteCredential(websiteToDelete);
+            // Call method to show confirmation dialog before deleting
+            rightClickDeleteWebsiteCredentialAlert(websiteToDelete);
         });
 
-        listContextMenu.getItems().add(deleteMenuItem); // Add this line
+        // Add the delete option to the context menu
+        listContextMenu.getItems().add(deleteMenuItem);
 
-        // Set the row factory for the TableView
+        // Apply the context menu to each row in the TableView
         tableView.setRowFactory(tv -> {
+            // Create a new TableRow for WebsiteCredential
             TableRow<WebsiteCredential> row = new TableRow<>();
+            // Bind the context menu to the row, only show it when the row is not empty
             row.contextMenuProperty().bind(
                     Bindings.when(row.emptyProperty())
                             .then((ContextMenu) null)
@@ -87,38 +95,45 @@ public class PasswordManagerController {
     }
 
 
-    // Change this to accept a user when integrating with the other branches
-//    public void setUser(User theLoadedUser) {
-//        this.theLoadedUser = theLoadedUser;
-//    }
+    // Creates and displays a confirmation alert before deleting a website credential.
+    public void rightClickDeleteWebsiteCredentialAlert(WebsiteCredential websiteToDelete) {
 
-    // Remove this after integrating with the other branches
-    // this is only being used for testing.
-
-    // Provides right click delete functionality
-    public void rightClickDeleteWebsiteCredential(WebsiteCredential websiteToDelete) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Website Credential");
+
+        // Set the header text with the details of the credential to be deleted
         alert.setHeaderText("Are you sure you want to delete the selected credentials: \n\n" +
                 "Website: " + websiteToDelete.getWebSiteName() + "\n" +
                 "User Name: " + websiteToDelete.getWebSiteUserName());
         alert.setContentText("Are you sure?\n");
+
+        // Show the alert and wait for the user's response
         Optional<ButtonType> result = alert.showAndWait();
 
+        // If the OK button is clicked, remove the credential from the user's list
         if (result.isPresent() && result.get() == ButtonType.OK) {
             theLoadedUser.removeCredential(websiteToDelete);
         }
     }
 
+
+
+    // Event handler for adding a new website credential.
+    // This loads the AddPasswordController, which opens a dialog for the
+    // user to input new credential details
     @FXML
     public void onAddWebsiteCredentialClicked() {
+        // Create a new dialog for adding website credentials
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
         dialog.setTitle("Add New Website Credential");
         dialog.setHeaderText("Please enter in the information for your new credentials.");
 
+        // Set up the FXMLLoader to load the AddPasswordController
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/com/jgm/securepasswordmanager/add_password.fxml"));
+
+        // Attempt to load the dialog pane with the FXML content
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
@@ -127,26 +142,27 @@ public class PasswordManagerController {
             return;
         }
 
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        // Add OK and Cancel buttons to the dialog pane
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+        // Display the dialog and wait for the user to close it, capturing the result
         Optional<ButtonType> result = dialog.showAndWait();
 
-        if(result.isPresent() && result.get() == ButtonType.OK) {
+        // Handle the user confirming the dialog
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             AddPasswordController addPasswordController = fxmlLoader.getController();
-//            addPasswordController.setUser(theLoadedUser);
             WebsiteCredential newItem = addPasswordController.processResults();
 
+            // Add the new credential to the current user's list
             theLoadedUser.addCredential(newItem);
-            //Bind the TableView to the list of website credentials
+
+            // Update the TableView to display the list of credentials including the new one
             tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
 
-            //Find the index of the new website credential
+            // Select the new credential in the TableView to highlight it for the user
             int newIndex = theLoadedUser.getWebsiteCredentialObservablelList().indexOf(newItem);
             tableView.getSelectionModel().select(newIndex);
-
         }
-
     }
 
 
@@ -218,9 +234,8 @@ public class PasswordManagerController {
         }
     }
 
+    // Generates test data for tableview
     public void loadTestUserAndWebsites() {
-        // Create credentials
-
         List<WebsiteCredential> credentialList = new ArrayList<>();
 
         credentialList.add(new WebsiteCredential("google.com", "userGoogle", "password123", "My Google account."));

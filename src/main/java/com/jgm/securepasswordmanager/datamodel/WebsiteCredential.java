@@ -16,6 +16,7 @@ public class WebsiteCredential {
     }
 
 
+    // Getters / Setters
     public String getWebSiteName() {
         return webSiteName;
     }
@@ -48,6 +49,8 @@ public class WebsiteCredential {
         this.notes = notes;
     }
 
+    // Overrides the default equals method to allow for comparing of two WebsiteCredential objects
+    // Two WebsiteCredentials are considered equal if they have the same website and username
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,6 +60,7 @@ public class WebsiteCredential {
                 Objects.equals(webSiteUserName, that.webSiteUserName);
     }
 
+    // Required to implement the equals override.
     @Override
     public int hashCode() {
         return Objects.hash(webSiteName, webSiteUserName);

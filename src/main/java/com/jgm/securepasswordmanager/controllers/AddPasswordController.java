@@ -22,11 +22,6 @@ public class AddPasswordController {
     @FXML
     private TextArea notesArea;
 
-    private User theLoadedUser;
-
-    public void setUser(User theLoadedUser) {
-        this.theLoadedUser = theLoadedUser;
-    }
 
     public WebsiteCredential processResults() {
         String websiteName = websiteNameField.getText().trim();
@@ -35,7 +30,6 @@ public class AddPasswordController {
         String notes = notesArea.getText().trim();
 
         WebsiteCredential newWebsiteCredential = new WebsiteCredential(websiteName, websiteUserName, websitePassword, notes);
-//        theLoadedUser.addCredential(newWebsiteCredential);
         return newWebsiteCredential;
     }
 
