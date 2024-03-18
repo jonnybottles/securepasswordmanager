@@ -91,13 +91,14 @@ public class UserDataService {
                         users.add(user);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return null;
                     }
                 }
             }
         }
         return users;
     }
-//
+
 //    public ObservableList<User> loadUsersFromFile() {
 //        ObservableList<User> users = FXCollections.observableArrayList();
 //        File directory = new File(USERS_DIRECTORY_PATH);
@@ -139,7 +140,8 @@ public class UserDataService {
     }
 
     private void decryptUserData(User user) {
-        user.setPassword(theEncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
+        String theUsersDecryptedPassword = theEncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt");
+        user.setPassword(theUsersDecryptedPassword);
         List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialNormalList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {

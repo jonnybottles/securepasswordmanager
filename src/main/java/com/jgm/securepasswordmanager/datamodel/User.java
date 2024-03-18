@@ -122,15 +122,18 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User that = (User) o;
-        return Objects.equals(userName, that.userName);
+        User user = (User) o;
+        return Objects.equals(userName, user.userName) &&
+                Objects.equals(password, user.password);
     }
+
 
     // Required to implement the equals override method
     @Override
     public int hashCode() {
-        return Objects.hash(userName);
+        return Objects.hash(userName, password);
     }
+
 
     @Override
     public String toString() {
