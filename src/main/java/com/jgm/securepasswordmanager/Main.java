@@ -10,9 +10,9 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("password_manager.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1100, 400);
-        stage.setTitle("Secure Password Manager Password Vault");
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("create_new_account.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 375, 427);
+        stage.setTitle("Secure Password Manager Login");
         stage.setScene(scene);
         stage.show();
     }
