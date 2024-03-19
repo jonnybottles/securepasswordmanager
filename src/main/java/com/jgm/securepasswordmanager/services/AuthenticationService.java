@@ -14,7 +14,6 @@ public class AuthenticationService {
     public AuthenticationService() {
         this.theLoadedUsers = new ArrayList<User>();
         this.theUserDataService = new UserDataService();
-        populateUserList();
     }
 
     public User login(String userName, String password) {

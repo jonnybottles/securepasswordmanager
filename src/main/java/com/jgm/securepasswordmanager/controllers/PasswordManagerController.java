@@ -2,6 +2,7 @@ package com.jgm.securepasswordmanager.controllers;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
+import com.jgm.securepasswordmanager.services.AuthenticationService;
 import com.jgm.securepasswordmanager.services.UserDataService;
 import javafx.beans.binding.Bindings;
 import javafx.event.Event;
@@ -42,10 +43,13 @@ public class PasswordManagerController {
 
     private UserDataService theUserDataService;
 
+    private AuthenticationService theAuthenticationService;
+
 
     // Initializes all classes / data
     public void initialize() {
         theUserDataService = new UserDataService();
+        theAuthenticationService = new AuthenticationService();
 
         loadTestUserAndWebsites();
 
@@ -114,7 +118,8 @@ public class PasswordManagerController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             theLoadedUser.removeCredential(websiteToDelete);
             // TODO change this to theAuthenticationService.save() once AuthenticationService is available.
-            theUserDataService.writeUserToFile(theLoadedUser);
+//            theUserDataService.writeUserToFile(theLoadedUser);
+            theAuthenticationService.saveUser(theLoadedUser);
         }
     }
 
@@ -158,7 +163,8 @@ public class PasswordManagerController {
             // Add the new credential to the current user's list
             theLoadedUser.addCredential(newItem);
             // TODO change this to theAuthenticationService.save() once AuthenticationService is available.
-            theUserDataService.writeUserToFile(theLoadedUser);
+//            theUserDataService.writeUserToFile(theLoadedUser);
+            theAuthenticationService.saveUser(theLoadedUser);
 
             // Update the TableView to display the list of credentials including the new one
             tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
@@ -240,8 +246,8 @@ public class PasswordManagerController {
 
     // Generates test data for tableview
     public void loadTestUserAndWebsites() {
-//        List<WebsiteCredential> credentialList = new ArrayList<>();
-//
+        List<WebsiteCredential> credentialList = new ArrayList<>();
+
 //        credentialList.add(new WebsiteCredential("google.com", "userGoogle", "password123", "My Google account."));
 //        credentialList.add(new WebsiteCredential("youtube.com", "userYouTube", "pass456", "My YouTube account."));
 //        credentialList.add(new WebsiteCredential("amazon.com", "userAmazon", "amz789", "Shopping account."));
@@ -280,10 +286,14 @@ public class PasswordManagerController {
 //            theLoadedUser.addCredential(cred);
 //        }
 
+//        theAuthenticationService.saveUser(theLoadedUser);
 //        theUserDataService.writeUserToFile(theLoadedUser);
 
-        List<User> theLoadedUserList = theUserDataService.loadUsersFromFile();
-        theLoadedUser = theLoadedUserList.get(0);
+//        List<User> theLoadedUserList = theUserDataService.loadUsersFromFile();
+//        theLoadedUser = theLoadedUserList.get(0);
+//
+        // TODO REMOVE THIS!!
+        theLoadedUser = theAuthenticationService.login("jbutler86", "secretpassword");
 
     }
 
