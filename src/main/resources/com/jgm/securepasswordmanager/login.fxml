@@ -5,9 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="427.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jgm.securepasswordmanager.controllers.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jgm.securepasswordmanager.controllers.LoginController">
     <top>
         <VBox alignment="CENTER" prefHeight="40.0" prefWidth="370.0">
             <Label text="Secure Password Manager" BorderPane.alignment="CENTER">
@@ -43,6 +41,11 @@
 
                 <Label text="Password:" GridPane.rowIndex="3" />
                 <TextField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <HBox alignment="CENTER" prefHeight="80.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2">
+               <children>
+                  <Label fx:id="loginStatusLabel" wrapText="true" />
+               </children>
+            </HBox>
 
 
 
@@ -67,19 +70,19 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="110.0" text="Forgot Password?" onAction="#handleForgotPasswordButtonClicked">
+                  <Button mnemonicParsing="false" onAction="#handleForgotPasswordButtonClicked" prefWidth="110.0" text="Forgot Password?">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefWidth="110.0" text="Register" onAction="#handleRegisterButtonClicked"/>
+                  <Button mnemonicParsing="false" onAction="#handleRegisterButtonClicked" prefWidth="110.0" text="Register" />
                </children>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets></HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2">
                <children>
-                  <Button fx:id="loginButton" mnemonicParsing="false" prefWidth="110.0" text="Login" onAction="#handleLoginButtonClicked"/>
+                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLoginButtonClicked" prefWidth="110.0" text="Login" />
                </children>
                <GridPane.margin>
                   <Insets bottom="20.0" />
