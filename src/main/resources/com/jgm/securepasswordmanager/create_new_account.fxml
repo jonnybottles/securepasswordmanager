@@ -47,10 +47,10 @@
             <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
             <Label text="Password:" GridPane.rowIndex="4" />
-            <TextField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
             <Label text="Confirm Password:" GridPane.rowIndex="5" />
-            <TextField fx:id="confirmPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <PasswordField fx:id="confirmPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
 
 

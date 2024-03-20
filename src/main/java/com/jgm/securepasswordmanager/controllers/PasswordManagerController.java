@@ -55,6 +55,7 @@ public class PasswordManagerController {
 
 
         createDeleteContextMenu();
+        tableView.setPlaceholder(new Label("Your Secure Password Vault is Currently Empty."));
 
 
 
