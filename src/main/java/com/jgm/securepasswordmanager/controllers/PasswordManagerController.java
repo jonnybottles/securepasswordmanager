@@ -51,18 +51,26 @@ public class PasswordManagerController {
         theUserDataService = new UserDataService();
         theAuthenticationService = new AuthenticationService();
 
-        loadTestUserAndWebsites();
+//        loadTestUserAndWebsites();
+
 
         createDeleteContextMenu();
 
-        //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
-        tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+
 
     }
 
     // Used by the LoginController class to pass in the loaded user
-    public void setUser(User theLoadedUser) {
-        this.theLoadedUser = theLoadedUser;
+    public void setUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("Cannot set a null User.");
+        }
+        this.theLoadedUser = user;
+
+        //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
+        tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+        // If you need to initialize components with user data, call a method to do it here
+
     }
 
     // Sets up a context menu on the TableView which will allow the user to
@@ -292,8 +300,8 @@ public class PasswordManagerController {
 //        List<User> theLoadedUserList = theUserDataService.loadUsersFromFile();
 //        theLoadedUser = theLoadedUserList.get(0);
 //
-        // TODO REMOVE THIS!!
-        theLoadedUser = theAuthenticationService.login("jbutler86", "secretpassword");
+//        // TODO REMOVE THIS!!
+//        theLoadedUser = theAuthenticationService.login("jbutler86", "secretpassword");
 
     }
 

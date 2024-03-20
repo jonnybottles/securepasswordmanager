@@ -5,9 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="427.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jgm.securepasswordmanager.controllers.CreateNewAccountController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jgm.securepasswordmanager.controllers.CreateNewAccountController">
   <top>
     <VBox alignment="CENTER" prefHeight="40.0" prefWidth="370.0">
       <Label text="Create New Account" BorderPane.alignment="CENTER">
@@ -77,11 +75,11 @@
          <children>
             <HBox alignment="CENTER" prefHeight="64.0" prefWidth="285.0" GridPane.columnSpan="2">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="75.0" text="Cancel" onAction="#handleCancelButtonClicked">
+                  <Button mnemonicParsing="false" onAction="#handleCancelButtonClicked" prefWidth="110.0" text="Cancel">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin></Button>
-                  <Button mnemonicParsing="false" prefWidth="75.0" text="Register" onAction="#handleRegisterButtonClicked" />
+                  <Button mnemonicParsing="false" onAction="#handleRegisterButtonClicked" prefWidth="110.0" text="Register" />
                </children>
             </HBox>
             <HBox maxHeight="200.0" minHeight="50.0" prefHeight="200.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
