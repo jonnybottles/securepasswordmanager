@@ -53,7 +53,7 @@ public class LoginController {
             stage.setScene(scene);
 
             // Optional: Set stage properties or show dialogs if needed
-            stage.setTitle("Secure Password Manager Login");
+            stage.setTitle("Create New Account");
             stage.show();
 
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.jgm.securepasswordmanager.controllers;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,22 +10,34 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class CreateNewAccountController {
 
-    @FXML private TextField firstNameField;
+    @FXML
+    private TextField firstNameField;
 
-    @FXML private TextField lastNameField;
+    @FXML
+    private TextField lastNameField;
 
-    @FXML private TextField emailAddressField;
+    @FXML
+    private TextField emailAddressField;
 
-    @FXML private TextField usernameField;
+    @FXML
+    private TextField usernameField;
 
-    @FXML private TextField passwordField;
+    @FXML
+    private TextField passwordField;
 
-    @FXML private TextField confirmPasswordField;
+    @FXML
+    private TextField confirmPasswordField;
+
+    @FXML
+    private Label bottomLabel;
+
 
     private AuthenticationService theAuthenticationService;
 
@@ -52,8 +65,9 @@ public class CreateNewAccountController {
         if (isAllInputValid()) {
             boolean saveResult = theAuthenticationService.saveUser(theNewUser);
             if (saveResult) {
-                System.out.println("User registered successfully.");
-                loadController(event, "/com/jgm/securepasswordmanager/login.fxml");
+                bottomLabel.setText("Registration successful.\n Returning to login screen...");
+                bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+                pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", 4);
             } else {
                 System.out.println("Failed to register the user.");
                 displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
@@ -112,6 +126,14 @@ public class CreateNewAccountController {
         }
         return true;
     }
+
+    private void pauseAndLoadController(ActionEvent event, String fxmlPath, double pauseSeconds) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> loadController(event, fxmlPath));
+        pause.play();
+    }
+
+
 
     private void loadController(ActionEvent event, String fxmlPath) {
         try {
