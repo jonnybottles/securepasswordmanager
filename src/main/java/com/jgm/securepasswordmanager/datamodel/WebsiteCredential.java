@@ -8,6 +8,7 @@ public class WebsiteCredential {
     private String webSitePassword;
     private String notes;
 
+
     public WebsiteCredential(String webSiteName, String webSiteUserName, String webSitePassword, String notes) {
         this.webSiteName = webSiteName;
         this.webSiteUserName = webSiteUserName;

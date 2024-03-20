@@ -13,6 +13,8 @@ public class User {
     private String emailAddress;
     private String userName;
     private String password;
+
+
     // Transient: Gson will ignore this field during serialization/deserialization
     private transient ObservableList<WebsiteCredential> websiteCredentialObservablelList;
 
