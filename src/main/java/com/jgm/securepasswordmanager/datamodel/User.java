@@ -43,40 +43,68 @@ public class User {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public boolean setFirstName(String firstName) {
+        if (!firstName.isEmpty()) {
+            this.firstName = firstName;
+            return true;
+        }
+        return false;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public boolean setLastName(String lastName) {
+        if (!lastName.isEmpty()) {
+            this.lastName = lastName;
+            return true;
+        }
+        return false;
     }
 
     public String getEmailAddress() {
         return emailAddress;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
+    // Validates email with basic criteria: local-part@domain
+    // - Local-part: alphanumeric, including _+&*-., not starting or ending with a dot
+    // - Domain: alphanumeric, including hyphens, followed by a period and a TLD (2-7 letters)
+    // Examples:
+    // Valid: example.email@domain.com
+    // Invalid: .email@domain..com
 
+    public boolean setEmailAddress(String emailAddress) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        if (emailAddress.matches(emailRegex)) {
+            this.emailAddress = emailAddress;
+            return true;
+        }
+        return false;
+    }
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public boolean setUserName(String userName) {
+        if (!userName.isEmpty()) {
+            this.userName = userName;
+            return true;
+        }
+        return false;
     }
+
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public boolean setPassword(String password) {
+        if (!password.isEmpty()) {
+            this.password = password;
+            return true;
+        }
+        return false;
     }
 
     // This method returns a normal website Credential list, used for writing to Json
