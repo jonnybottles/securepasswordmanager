@@ -12,9 +12,9 @@
                 <padding>
                     <Insets bottom="2.0" top="15.0" />
                 </padding>
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
+<!--                <font>-->
+<!--                    <Font name="System Bold" size="18.0" />-->
+<!--                </font>-->
             </Label>
             <Label text="Butler Cyber Technologies Inc." BorderPane.alignment="CENTER" />
             <Separator maxWidth="225.0" orientation="HORIZONTAL" prefWidth="350.0" />

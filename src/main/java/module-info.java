@@ -2,6 +2,7 @@ module com.jgm.securepasswordmanager {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.gson;
+    requires org.jfxtras.styles.jmetro;
 
 
     opens com.jgm.securepasswordmanager to javafx.fxml;
