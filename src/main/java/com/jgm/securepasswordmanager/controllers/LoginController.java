@@ -15,6 +15,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.IOException;
 
@@ -43,7 +45,7 @@ public class LoginController {
 
     @FXML
     protected void handleRegisterButtonClicked(ActionEvent event) {
-        loadController(event, "/com/jgm/securepasswordmanager/create_new_account.fxml");
+        pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/create_new_account.fxml", 0);
     }
 
     @FXML
@@ -65,6 +67,35 @@ public class LoginController {
         }
     }
 
+    private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+
+
+
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+
+                // Create a JMetro instance with the desired style (LIGHT or DARK)
+                JMetro jMetro = new JMetro(Style.LIGHT);  // or Style.DARK for the dark theme
+
+                // Apply the styles to your scene
+                jMetro.setScene(scene);
+                stage.setTitle("Create New User");
+                stage.setScene(scene);
+
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        pause.play();
+    }
+
+
     private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds, User theLoadedUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
@@ -75,8 +106,16 @@ public class LoginController {
                 PasswordManagerController passwordManagerController = loader.getController();
                 passwordManagerController.setUser(theLoadedUser);
 
+
+
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
+
+                // Create a JMetro instance with the desired style (LIGHT or DARK)
+                JMetro jMetro = new JMetro(Style.LIGHT);  // or Style.DARK for the dark theme
+
+                // Apply the styles to your scene
+                jMetro.setScene(scene);
                 stage.setTitle("Secure Password Vault");
                 stage.setScene(scene);
 
@@ -95,7 +134,10 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
             stage.setScene(new Scene(root));
+
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
