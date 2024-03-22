@@ -29,10 +29,10 @@
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="28.0" minHeight="10.0" prefHeight="22.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
@@ -41,8 +41,8 @@
                 <TextField fx:id="userNameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                 <Label text="Password:" GridPane.rowIndex="3" />
-                <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <HBox alignment="CENTER" prefHeight="55.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2">
+                <PasswordField fx:id="passwordField" alignment="BOTTOM_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <HBox alignment="CENTER" prefHeight="70.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2">
                     <children>
                         <Label fx:id="loginStatusLabel" wrapText="true" />
                     </children>
