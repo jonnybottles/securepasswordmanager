@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -32,7 +33,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
 
@@ -41,11 +42,28 @@
 
                 <Label text="Password:" GridPane.rowIndex="3" />
                 <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <HBox alignment="CENTER" prefHeight="80.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2">
+                <HBox alignment="CENTER" prefHeight="55.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2">
+                    <children>
+                        <Label fx:id="loginStatusLabel" wrapText="true" />
+                    </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+                </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="84.0" prefWidth="275.0" GridPane.columnSpan="2" GridPane.rowSpan="2">
                <children>
-                  <Label fx:id="loginStatusLabel" wrapText="true" />
+                   <ImageView fitHeight="92.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                       <image>
+                           <Image url="/l3.png" /> <!-- Replace with the actual path to your image -->
+                       </image>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                   </ImageView>
                </children>
-            </HBox>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" top="10.0" />
+               </padding></HBox>
 
 
 
