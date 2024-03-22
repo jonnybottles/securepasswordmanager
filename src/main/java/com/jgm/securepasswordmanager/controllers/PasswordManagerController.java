@@ -39,11 +39,18 @@ public class PasswordManagerController {
     @FXML
     private ContextMenu listContextMenu;
 
+    @FXML
+    private Label userNameLabel;
+
+    @FXML
+    private Label emailLabel;
+
     private User theLoadedUser;
 
     private UserDataService theUserDataService;
 
     private AuthenticationService theAuthenticationService;
+
 
 
     // Initializes all classes / data
@@ -71,6 +78,8 @@ public class PasswordManagerController {
         //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
         tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
         // If you need to initialize components with user data, call a method to do it here
+        userNameLabel.setText(theLoadedUser.getUserName());
+        emailLabel.setText(theLoadedUser.getEmailAddress());
 
     }
 
