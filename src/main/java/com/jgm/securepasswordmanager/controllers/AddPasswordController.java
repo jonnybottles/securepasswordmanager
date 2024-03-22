@@ -33,6 +33,14 @@ public class AddPasswordController {
         return newWebsiteCredential;
     }
 
+    public void prepopulateFields(WebsiteCredential credential) {
+        websiteNameField.setText(credential.getWebSiteName());
+        websiteUserNameField.setText(credential.getWebSiteUserName());
+        webSitePasswordField.setText(credential.getWebSitePassword());
+        notesArea.setText(credential.getNotes());
+    }
+
+
     public void editWebsiteCredential(WebsiteCredential theWebsiteCredential) {
         websiteNameField.setText(theWebsiteCredential.getWebSiteName());
         websiteUserNameField.setText(theWebsiteCredential.getWebSiteUserName());
@@ -40,11 +48,21 @@ public class AddPasswordController {
         notesArea.setText(theWebsiteCredential.getNotes());
     }
 
-    public void updateWebsiteCredential(WebsiteCredential theWebsiteCredential) {
+    public WebsiteCredential updateWebsiteCredential(WebsiteCredential theWebsiteCredential) {
         websiteNameField.setText(theWebsiteCredential.getWebSiteName());
         websiteUserNameField.setText(theWebsiteCredential.getWebSiteUserName());
         webSitePasswordField.setText(theWebsiteCredential.getWebSitePassword());
         notesArea.setText(theWebsiteCredential.getNotes());
+
+
+
+        theWebsiteCredential.setWebSiteName(websiteNameField.getText());
+        theWebsiteCredential.setWebSiteUserName(websiteUserNameField.getText());
+        theWebsiteCredential.setWebSitePassword(webSitePasswordField.getText());
+        theWebsiteCredential.setNotes(notesArea.getText());
+
+        return theWebsiteCredential;
+
     }
 
 

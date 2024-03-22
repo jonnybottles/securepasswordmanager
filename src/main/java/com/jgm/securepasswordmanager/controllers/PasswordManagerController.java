@@ -5,11 +5,16 @@ import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
 import com.jgm.securepasswordmanager.services.UserDataService;
 import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -159,7 +164,23 @@ public class PasswordManagerController {
         }
     }
 
+    @FXML
+    public void onLogOutButtonClicked(ActionEvent event) {
+        loadController(event, "/com/jgm/securepasswordmanager/login.fxml");
+    }
 
+    private void loadController(ActionEvent event, String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setX(800);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Event handler for adding a new website credential.
     // This loads the AddPasswordController, which opens a dialog for the
@@ -223,45 +244,99 @@ public class PasswordManagerController {
         }
     }
 
-
     @FXML
     public void onEditWebsiteCredentialClicked() {
-        WebsiteCredential selectedWebsiteCredential = tableView.getSelectionModel().getSelectedItem();
-        if(selectedWebsiteCredential == null) {
+        WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
+        if(selectedCredential != null) {
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.initOwner(mainBorderPane.getScene().getWindow());
+            dialog.setTitle("Edit Website Credential");
+            dialog.setHeaderText("Edit your Credential");
+
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/com/jgm/securepasswordmanager/add_password.fxml"));
+
+            try {
+                dialog.getDialogPane().setContent(fxmlLoader.load());
+            } catch (IOException e) {
+                System.out.println("Couldn't load the dialog");
+                e.printStackTrace();
+                return;
+            }
+
+            AddPasswordController controller = fxmlLoader.getController();
+            controller.prepopulateFields(selectedCredential);
+
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            Optional<ButtonType> result = dialog.showAndWait();
+            if(result.isPresent() && result.get() == ButtonType.OK) {
+                // if this doesnt work do this
+//                theLoadedUser.addCredential(controller.updateWebsiteCredential(selectedCredential));
+
+                WebsiteCredential newCredential = controller.processResults();
+
+                selectedCredential.setWebSiteName(newCredential.getWebSiteName());
+                selectedCredential.setWebSitePassword(newCredential.getWebSitePassword());
+                selectedCredential.setWebSiteUserName(newCredential.getWebSiteUserName());
+                selectedCredential.setNotes(newCredential.getNotes());
+
+                String userName = theLoadedUser.getUserName();
+                String password = theLoadedUser.getPassword();
+
+                theAuthenticationService.saveUser(theLoadedUser); // Save updated credentials
+                theLoadedUser = theAuthenticationService.login(userName, password);
+                tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+                tableView.refresh(); // Refresh the TableView to show the updated data
+            }
+        } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("No Website Selected");
+            alert.setTitle("No Website Credential Selected");
             alert.setHeaderText(null);
-            alert.setContentText("Please select the website you want to edit.");
+            alert.setContentText("Please select the website credential you want to edit.");
             alert.showAndWait();
-            return;
-        }
-
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.initOwner(mainBorderPane.getScene().getWindow());
-        dialog.setTitle("Edit Website Credential");
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("add_password.fxml"));
-        try {
-            dialog.getDialogPane().setContent(fxmlLoader.load());
-        } catch (IOException e) {
-            System.out.println("Couldn't load the dialog");
-            e.printStackTrace();
-            return;
-        }
-
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-
-        AddPasswordController theAddPasswordController = fxmlLoader.getController();
-        theAddPasswordController.editWebsiteCredential(selectedWebsiteCredential);
-
-        Optional<ButtonType> result = dialog.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK) {
-            theAddPasswordController.updateWebsiteCredential(selectedWebsiteCredential);
-            // TODO Call Edit website in userdata services here once created
-            // or just overwrite the file which would be easier
         }
     }
+
+
+//    @FXML
+//    public void onEditWebsiteCredentialClicked() {
+//        WebsiteCredential selectedWebsiteCredential = tableView.getSelectionModel().getSelectedItem();
+//        if(selectedWebsiteCredential == null) {
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("No Website Selected");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Please select the website you want to edit.");
+//            alert.showAndWait();
+//            return;
+//        }
+//
+//        Dialog<ButtonType> dialog = new Dialog<>();
+//        dialog.initOwner(mainBorderPane.getScene().getWindow());
+//        dialog.setTitle("Edit Website Credential");
+//        FXMLLoader fxmlLoader = new FXMLLoader();
+//        fxmlLoader.setLocation(getClass().getResource("add_password.fxml"));
+//        try {
+//            dialog.getDialogPane().setContent(fxmlLoader.load());
+//        } catch (IOException e) {
+//            System.out.println("Couldn't load the dialog");
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+//        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+//
+//        AddPasswordController theAddPasswordController = fxmlLoader.getController();
+//        theAddPasswordController.editWebsiteCredential(selectedWebsiteCredential);
+//
+//        Optional<ButtonType> result = dialog.showAndWait();
+//        if(result.isPresent() && result.get() == ButtonType.OK) {
+//            theAddPasswordController.updateWebsiteCredential(selectedWebsiteCredential);
+//            // TODO Call Edit website in userdata services here once created
+//            // or just overwrite the file which would be easier
+//        }
+//    }
 
     public void onDeleteWebsiteCredential() {
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
