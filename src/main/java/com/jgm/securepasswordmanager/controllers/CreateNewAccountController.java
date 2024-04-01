@@ -16,6 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 public class CreateNewAccountController {
 
     @FXML
@@ -57,26 +59,39 @@ public class CreateNewAccountController {
 
     @FXML
     private void handleCancelButtonClicked(ActionEvent event) {
-        loadController(event, "/com/jgm/securepasswordmanager/login.fxml");
+        loadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login");
     }
 
+
+//    @FXML
+//    private void handleRegisterButtonClicked(ActionEvent event) {
+//        if (isAllInputValid()) {
+//            boolean saveResult = theAuthenticationService.saveUser(theNewUser);
+//            if (saveResult) {
+//                bottomLabel.setText("Registration successful.\n Returning to login screen...");
+//                bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+//                pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login",  4);
+//            } else {
+//                System.out.println("Failed to register the user.");
+//                displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
+//            }
+//        } else {
+//            displayInformationalAlert("Invalid input", "Invalid input", theInformationalAlertMessage.toString());
+//        }
+//    }
 
     @FXML
     private void handleRegisterButtonClicked(ActionEvent event) {
         if (isAllInputValid()) {
-            boolean saveResult = theAuthenticationService.saveUser(theNewUser);
-            if (saveResult) {
-                bottomLabel.setText("Registration successful.\n Returning to login screen...");
-                bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
-                pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", 4);
-            } else {
-                System.out.println("Failed to register the user.");
-                displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
-            }
+            bottomLabel.setText("Registration successful.\n Proceeding to two factor authentication setup...");
+            bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+            pauseAndLoadTwoFactorAuthenticationSetupController(event, "/com/jgm/securepasswordmanager/two_factor_authentication_setup.fxml",
+                     4, theNewUser);
         } else {
             displayInformationalAlert("Invalid input", "Invalid input", theInformationalAlertMessage.toString());
         }
     }
+
 
     private boolean isAllInputValid() {
         // Clear previous error messages
@@ -128,20 +143,44 @@ public class CreateNewAccountController {
         return true;
     }
 
-    private void pauseAndLoadController(ActionEvent event, String fxmlPath, double pauseSeconds) {
+    private void pauseAndLoadController(ActionEvent event, String fxmlPath, String title, double pauseSeconds) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-        pause.setOnFinished(e -> loadController(event, fxmlPath));
+        pause.setOnFinished(e -> loadController(event, fxmlPath, title));
+        pause.play();
+    }
+
+    private void pauseAndLoadTwoFactorAuthenticationSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+
+                TwoFactorAuthenticationSetupController twoFactorAuthenticationSetupController = loader.getController();
+                twoFactorAuthenticationSetupController.setUser(theNewUser);
+
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setTitle("Two Factor Authentication Setup");
+                stage.setScene(scene);
+
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
         pause.play();
     }
 
 
 
-    private void loadController(ActionEvent event, String fxmlPath) {
+    private void loadController(ActionEvent event, String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

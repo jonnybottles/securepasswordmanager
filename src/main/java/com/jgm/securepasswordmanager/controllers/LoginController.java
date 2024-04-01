@@ -43,7 +43,7 @@ public class LoginController {
 
     @FXML
     protected void handleRegisterButtonClicked(ActionEvent event) {
-        loadController(event, "/com/jgm/securepasswordmanager/create_new_account.fxml");
+        loadController(event, "/com/jgm/securepasswordmanager/create_new_account.fxml", "New Account");
     }
 
     @FXML
@@ -90,12 +90,12 @@ public class LoginController {
         pause.play();
     }
 
-    private void loadController(ActionEvent event, String fxmlPath) {
+    private void loadController(ActionEvent event, String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("New Account");
+            stage.setTitle(title);
             stage.setScene(new Scene(root));
             stage.show();
         } catch (Exception e) {

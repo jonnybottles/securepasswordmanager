@@ -13,6 +13,7 @@ public class User {
     private String emailAddress;
     private String userName;
     private String password;
+    private boolean hasRegisteredTwoFactorAuthentication;
 
 
     // Transient: Gson will ignore this field during serialization/deserialization
@@ -105,6 +106,14 @@ public class User {
             return true;
         }
         return false;
+    }
+
+    public boolean getHasRegisteredTwoFactorAuthentication() {
+        return hasRegisteredTwoFactorAuthentication;
+    }
+
+    public void setHasRegisteredTwoFactorAuthentication(boolean hasRegisteredTwoFactorAuthentication) {
+        this.hasRegisteredTwoFactorAuthentication = hasRegisteredTwoFactorAuthentication;
     }
 
     // This method returns a normal website Credential list, used for writing to Json
