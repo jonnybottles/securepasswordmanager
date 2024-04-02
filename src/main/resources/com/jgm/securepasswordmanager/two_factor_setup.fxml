@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jgm.securepasswordmanager.controllers.TwoFactorSetupController">
+    <center>
+        <VBox alignment="TOP_CENTER" prefHeight="327.0" prefWidth="375.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Two Factor Authentication Setup">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Label>
+            <Separator prefWidth="200.0" />
+            <Label text="To enhance the security of your account, please set up two-factor authentication by scanning the QR code below with your Google Authenticator app." wrapText="true">
+               <padding>
+                  <Insets top="20.0" />
+               </padding></Label>
+            <ImageView fx:id="qrCodeImageView" fitHeight="110.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true">
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+                <image>
+                    <Image url="/qrcode.png" /> <!-- Replace with the actual path to your image -->
+                </image>
+            </ImageView>
+            <Label fx:id="qrCodeVertificationLabel" prefHeight="63.0" prefWidth="269.0" text="Once scanned, enter the code from the app below:">
+               <padding>
+                  <Insets top="20.0" />
+               </padding></Label>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="40.0" right="40.0" top="15.0" />
+         </padding></VBox>
+    </center>
+    <bottom>
+      <GridPane prefHeight="89.0" prefWidth="427.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <padding>
+            <Insets bottom="15.0" left="40.0" right="40.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="295.0" spacing="30.0" GridPane.columnSpan="2">
+               <children>
+                  <Label text="Authentication Code:" />
+                  <TextField fx:id="authenticationCodeField" />
+               </children>
+            </HBox>
+            <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <children>
+                   <Button mnemonicParsing="false" onAction="#handleCancelButtonClicked" prefWidth="110.0" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#handleVerifyButtonClicked" prefWidth="110.0" text="Verify" />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></HBox>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </GridPane>
+   </bottom>
+
+</BorderPane>

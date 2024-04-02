@@ -54,34 +54,41 @@ public class LoginController {
         User theLoadedUser = theAuthenticationService.login(username, password);
 
         if (theLoadedUser != null) {
+            if (!theLoadedUser.getHasRegisteredTwoFactorAuthentication()) {
+                loginStatusLabel.setText("Two factor authentication registration required.\nProceeding to two factor authentication setup...");
+                loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+                pauseAndLoadTwoFactorSetupController(event, "/com/jgm/securepasswordmanager/two_factor_setup.fxml",
+                        4, theLoadedUser);
+            } else {
+                pauseAndLoadTwoFactorVerificationController(event, "/com/jgm/securepasswordmanager/two_factor_verification.fxml", 0, theLoadedUser);
 
-            loginStatusLabel.setText("    Login successful.\n     Loading your secure password vault...");
-            loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+            }
 
-            pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
+//            loginStatusLabel.setText("    Login successful.\n     Loading your secure password vault...");
+//            loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+
         } else {
             loginStatusLabel.setText("    Login failure.\n     Invalid username or password.");
             loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
         }
     }
 
-    private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds, User theLoadedUser) {
+
+    private void pauseAndLoadTwoFactorVerificationController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 Parent root = loader.load();
 
-                PasswordManagerController passwordManagerController = loader.getController();
-                passwordManagerController.setUser(theLoadedUser);
+                TwoFactorVerificationController twoFactorVerificationController = loader.getController();
+                twoFactorVerificationController.setUser(theNewUser);
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
-                stage.setTitle("Secure Password Vault");
+                stage.setTitle("Two Factor Verification");
                 stage.setScene(scene);
 
-                // Adjust the window position as needed
-                stage.setX(400); // Set this value as needed to position the window
                 stage.show();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -89,6 +96,31 @@ public class LoginController {
         });
         pause.play();
     }
+
+
+    private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+
+                TwoFactorSetupController twoFactorSetupController = loader.getController();
+                twoFactorSetupController.setUser(theNewUser);
+
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setTitle("Two Factor Authentication Setup");
+                stage.setScene(scene);
+
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        pause.play();
+    }
+
 
     private void loadController(ActionEvent event, String fxmlPath, String title) {
         try {
