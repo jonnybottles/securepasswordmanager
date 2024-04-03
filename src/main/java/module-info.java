@@ -6,6 +6,10 @@ module com.jgm.securepasswordmanager {
     // Add ZXing modules here
     requires com.google.zxing;
     requires com.google.zxing.javase;
+    requires org.apache.commons.codec;
+    requires totp;
+//    requires org.commons.codec;
+
 
     opens com.jgm.securepasswordmanager to javafx.fxml;
     opens com.jgm.securepasswordmanager.datamodel to com.google.gson;

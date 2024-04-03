@@ -1,5 +1,6 @@
 package com.jgm.securepasswordmanager.services;
 
+import com.jgm.securepasswordmanager.controllers.TwoFactorVerificationController;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +19,9 @@ class TwoFactorAuthenticationServiceTest {
 		String expectedBarCode = "otpauth://totp/Butler%20Cyber%20Technologies%3Atest%40gmail.com?secret=QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK&issuer=Butler%20Cyber%20Technologies";
 
 		// Act
-		String actualBarCode = TwoFactorAuthenticationService.getGoogleAuthenticatorBarCode(secretKey, emailAddress, issuer);
+		TwoFactorAuthenticationService theTwoFactorAuthentiationService = new TwoFactorAuthenticationService();
+
+		String actualBarCode = theTwoFactorAuthentiationService.getGoogleAuthenticatorBarCode(secretKey, emailAddress, issuer);
 
 		// Assert
 		assertEquals(expectedBarCode, actualBarCode, "The generated Google Authenticator barcode URL does not match the expected value.");
@@ -26,8 +29,10 @@ class TwoFactorAuthenticationServiceTest {
 
 	@Test
 	void testCreateQRCode() throws Exception {
+		TwoFactorAuthenticationService theTwoFactorAuthentiationService = new TwoFactorAuthenticationService();
+
 		// Arrange
-		String barCodeData = TwoFactorAuthenticationService.getGoogleAuthenticatorBarCode(
+		String barCodeData =  theTwoFactorAuthentiationService.getGoogleAuthenticatorBarCode(
 				"QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
 				"xxbutler86xx@gmail.com",
 				"Butler Cyber Technologies"
@@ -37,7 +42,7 @@ class TwoFactorAuthenticationServiceTest {
 		int width = 200;
 
 		// Act
-		TwoFactorAuthenticationService.createQRCode(barCodeData, filePath, height, width);
+		theTwoFactorAuthentiationService.createQRCode(barCodeData, filePath, height, width);
 
 		// Assert
 		File file = new File(filePath);
@@ -46,4 +51,33 @@ class TwoFactorAuthenticationServiceTest {
 		// Cleanup
 		Files.delete(Paths.get(filePath));
 	}
+
+	@Test
+	void testGetTOTPCode() {
+		// Arrange
+		String secretKey = "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK";
+		TwoFactorAuthenticationService service = new TwoFactorAuthenticationService();
+
+		// Act
+		String otpCode = service.getTOTPCode(secretKey);
+
+		// Assert
+		assertNotNull(otpCode, "OTP code should not be null.");
+		assertTrue(otpCode.matches("\\d+"), "OTP code should be numeric.");
+	}
+
+	@Test
+	void testValidateAuthenticationCode() {
+		// Arrange
+		TwoFactorAuthenticationService service = new TwoFactorAuthenticationService();
+		String secretKey = "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK";
+		// This will need to be the actual TOTP code generated at the time of testing
+		String correctUserCode = service.getTOTPCode(secretKey);
+		String incorrectUserCode = "123456";
+
+		// Act & Assert
+		assertTrue(service.validateAuthenticationCode(correctUserCode, secretKey), "Correct user code should validate as true.");
+		assertFalse(service.validateAuthenticationCode(incorrectUserCode, secretKey), "Incorrect user code should validate as false.");
+	}
+
 }

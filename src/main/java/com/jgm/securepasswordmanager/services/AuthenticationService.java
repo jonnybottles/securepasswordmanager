@@ -10,10 +10,11 @@ public class AuthenticationService {
 
     private List<User> theLoadedUsers;
     private UserDataService theUserDataService;
-
+    private TwoFactorAuthenticationService twoFactorAuthenticationService;
     public AuthenticationService() {
         this.theLoadedUsers = new ArrayList<User>();
         this.theUserDataService = new UserDataService();
+        this.twoFactorAuthenticationService = new TwoFactorAuthenticationService();
     }
 
     public User login(String userName, String password) {
@@ -38,6 +39,12 @@ public class AuthenticationService {
         }
         return false;
     }
+
+//    public boolean registerTwoFactorAuthentiation(User theUser) {
+//        String barCode = twoFactorAuthenticationService.getGoogleAuthenticatorBarCode("thesecretkey",
+//                theUser.getEmailAddress(), "Butler Cyber Technologies");
+//
+//    }
 
 
     public boolean populateUserList() {
