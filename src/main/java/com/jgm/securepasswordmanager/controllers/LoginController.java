@@ -98,7 +98,8 @@ public class LoginController {
     }
 
 
-    private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
+
+    private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User newUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
             try {
@@ -106,13 +107,13 @@ public class LoginController {
                 Parent root = loader.load();
 
                 TwoFactorSetupController twoFactorSetupController = loader.getController();
-                twoFactorSetupController.setUser(theNewUser);
+                twoFactorSetupController.setUser(newUser); // Make sure to implement this method in TwoFactorSetupController
+                twoFactorSetupController.generateAndDisplayQRCode(); // Now this can be called since the user has been set
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Two Factor Authentication Setup");
                 stage.setScene(scene);
-
                 stage.show();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -120,6 +121,7 @@ public class LoginController {
         });
         pause.play();
     }
+
 
 
     private void loadController(ActionEvent event, String fxmlPath, String title) {

@@ -27,7 +27,7 @@ public class AuthenticationService {
         populateUserList();
 
         for (User theUser : theLoadedUsers) {
-            System.out.println("User Name: " + theUser.getUserName()  + "\n" + "Password:" + theUser.getPassword() +"\n");
+//            System.out.println("User Name: " + theUser.getUserName()  + "\n" + "Password:" + theUser.getPassword() +"\n");
             if (theUser.equals(tempUser)) {
                 return theUser;
             }
