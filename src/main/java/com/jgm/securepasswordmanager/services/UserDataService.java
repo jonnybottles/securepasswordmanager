@@ -5,6 +5,7 @@ import com.jgm.securepasswordmanager.datamodel.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataService {
-    private final String USERS_DIRECTORY_PATH = "user_data";
+//    private final String USERS_DIRECTORY_PATH = "data/user_data";
+//    private final String USERS_MASTER_KEY_PATH = "data/user_master_keys";
+//    private final String QR_CODE_PATH = "data/qr_codes";
     private EncryptionService theEncryptionService;
     private Gson theGson;
 
@@ -22,36 +25,60 @@ public class UserDataService {
         this.theGson = new GsonBuilder().setPrettyPrinting().create();
     }
 
-    // Creates the user_data directory if it doesn't already exist
-    public boolean createUserDataDirectory() {
+//    // Creates the user_data directory if it doesn't already exist
+//    public boolean createUserDataDirectory() {
+//
+//        // Obtain the path to the users current working directory / where the program was executed from.
+//        String currentPath = System.getProperty("user.dir");
+//
+//        // Creates user_data directory path by concating current path
+//        // with OS specific separator (e.g. / or \) and the user data directory
+//        File userDataDirectory = new File(currentPath + File.separator + USERS_DIRECTORY_PATH);
+//
+//        if (!userDataDirectory.exists()) {
+//            try {
+//                boolean wasCreated = userDataDirectory.mkdirs();
+//                if (!wasCreated) {
+//                    return false;
+//                }
+//            } catch (SecurityException e) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
-        // Obtain the path to the users current working directory / where the program was executed from.
-        String currentPath = System.getProperty("user.dir");
-
-        // Creates user_data directory path by concating current path
-        // with OS specific separator (e.g. / or \) and the user data directory
-        File userDataDirectory = new File(currentPath + File.separator + USERS_DIRECTORY_PATH);
-
-        if (!userDataDirectory.exists()) {
-            try {
-                boolean wasCreated = userDataDirectory.mkdirs();
-                if (!wasCreated) {
-                    return false;
-                }
-            } catch (SecurityException e) {
-                return false;
-            }
+    /** Creates a directory if it does not exist already. */
+    private static boolean createDirectoryIfNotExists(String directoryName) {
+        File directory = new File(System.getProperty("user.dir"), directoryName);
+        if (!directory.exists()) {
+            return directory.mkdirs();
         }
-
         return true;
     }
 
-    public boolean writeUserToFile(User user) {
-        if (!createUserDataDirectory()) {
-            return false;
-        }
+    private boolean createUserDataDirectory() {
+        return createDirectoryIfNotExists(DirectoryPath.USERS_DIRECTORY);
+    }
 
-        String userDataFilename = USERS_DIRECTORY_PATH + File.separator + user.getUserName() + ".json";
+    private boolean createUserMasterKeyDirectory() {
+        return createDirectoryIfNotExists(DirectoryPath.USERS_MASTER_KEY);
+    }
+
+    private boolean createQRCodeDirectory() {
+        return createDirectoryIfNotExists(DirectoryPath.QR_CODE_DIRECTORY);
+    }
+
+
+
+    public boolean createAllProgramDirectories() {
+        return createUserDataDirectory() && createUserMasterKeyDirectory() && createQRCodeDirectory();
+    }
+
+    public boolean writeUserToFile(User user) {
+
+        String userDataFilename = DirectoryPath.USERS_DIRECTORY + File.separator + user.getUserName() + ".json";
 
         // Convert ObservableList to List for Gson serialization
         List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialObservablelList());
@@ -71,7 +98,7 @@ public class UserDataService {
 
     public List<User> loadUsersFromFile() {
         List<User> users = new ArrayList<>();
-        File directory = new File(USERS_DIRECTORY_PATH);
+        File directory = new File(DirectoryPath.USERS_DIRECTORY);
 
         if (directory.exists() && directory.isDirectory()) {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));

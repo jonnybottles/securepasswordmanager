@@ -3,6 +3,7 @@ package com.jgm.securepasswordmanager.services;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 //import com.jgm.securepasswordmanager.utils.FileUtils;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserDataServiceTest {
 
     private UserDataService theUserDataService;
-    private final File userDataDirectory = new File("user_data");
 
     @BeforeEach
     public void setUp() {
         // Initialize UserDataService for each test
         theUserDataService = new UserDataService();
         // Ensure the test directory is clean before each test
-        recursiveDelete(userDataDirectory.toPath());
+        FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+
+        theUserDataService.createAllProgramDirectories();
     }
 
 //    @AfterEach
@@ -38,21 +40,23 @@ public class UserDataServiceTest {
 //        recursiveDelete(userDataDirectory.toPath());
 //    }
 
-    @Test
-    public void testCreateUserDataDirectory() {
-        // Verify the directory does not already exist
-        assertFalse(userDataDirectory.exists());
-
-        // Attempt to create the directory and verify success
-        boolean result = theUserDataService.createUserDataDirectory();
-
-        // The directory should now exist
-        assertTrue(result);
-        assertTrue(userDataDirectory.exists());
-    }
+//    @Test
+//    public void testCreateUserDataDirectory() {
+//        // Verify the directory does not already exist
+//        assertFalse(userDataDirectory.exists());
+//
+//        // Attempt to create the directory and verify success
+//        boolean result = theUserDataService.createUserDataDirectory();
+//
+//        // The directory should now exist
+//        assertTrue(result);
+//        assertTrue(userDataDirectory.exists());
+//    }
 
     @Test
     public void testWriteUserToFile() {
+
+
         // Prepare user data for writing to file
         User theUser = prepareUserData();
 
@@ -60,7 +64,7 @@ public class UserDataServiceTest {
         assertTrue(theUserDataService.writeUserToFile(theUser));
 
         // Verify that the file now exists
-        File userFile = new File(userDataDirectory, theUser.getUserName() + ".json");
+        File userFile = new File(DirectoryPath.USERS_DIRECTORY, theUser.getUserName() + ".json");
         assertTrue(userFile.exists());
     }
 

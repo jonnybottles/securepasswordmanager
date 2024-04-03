@@ -1,7 +1,10 @@
 package com.jgm.securepasswordmanager.services;
 
+import com.google.zxing.WriterException;
 import com.jgm.securepasswordmanager.datamodel.User;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +27,7 @@ public class AuthenticationService {
         populateUserList();
 
         for (User theUser : theLoadedUsers) {
+            System.out.println("User Name: " + theUser.getUserName()  + "\n" + "Password:" + theUser.getPassword() +"\n");
             if (theUser.equals(tempUser)) {
                 return theUser;
             }
@@ -40,11 +44,23 @@ public class AuthenticationService {
         return false;
     }
 
-//    public boolean registerTwoFactorAuthentiation(User theUser) {
-//        String barCode = twoFactorAuthenticationService.getGoogleAuthenticatorBarCode("thesecretkey",
-//                theUser.getEmailAddress(), "Butler Cyber Technologies");
-//
-//    }
+    public boolean generateQRCode(User theUser, String qRCodePath) {
+        String barCode = twoFactorAuthenticationService.getGoogleAuthenticatorBarCode("QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
+                theUser.getEmailAddress(), "Butler Cyber Technologies");
+
+        try {
+            twoFactorAuthenticationService.createQRCode(barCode, qRCodePath, 200, 200);
+            return true;
+        } catch (WriterException | IOException e) {
+            System.out.println(e);
+            return false;
+        }
+
+    }
+
+    public boolean registerTwoFactorAuthentication(String userCode, String secretKey) {
+		return twoFactorAuthenticationService.validateAuthenticationCode(userCode, secretKey);
+	}
 
 
     public boolean populateUserList() {

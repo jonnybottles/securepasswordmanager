@@ -1,6 +1,7 @@
 package com.jgm.securepasswordmanager.services;
 
 import com.jgm.securepasswordmanager.datamodel.User;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import com.jgm.securepasswordmanager.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,11 +40,11 @@ class AuthenticationServiceTest {
 
     }
 
-    @AfterEach
-    public void tearDown() {
-        // Clean up after each test by deleting the test directory and its contents
-        FileUtils.recursiveDelete(userDataDirectory.toPath());
-    }
+//    @AfterEach
+//    public void tearDown() {
+//        // Clean up after each test by deleting the test directory and its contents
+//        FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+//    }
 
     @Test
     void testLoginSuccess() {

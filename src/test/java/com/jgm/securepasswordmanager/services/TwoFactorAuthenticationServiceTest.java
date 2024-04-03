@@ -1,6 +1,10 @@
 package com.jgm.securepasswordmanager.services;
 
 import com.jgm.securepasswordmanager.controllers.TwoFactorVerificationController;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
+import com.jgm.securepasswordmanager.utils.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,6 +13,24 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class TwoFactorAuthenticationServiceTest {
+
+	private UserDataService theUserDataService;
+
+	@BeforeEach
+	public void setUp() {
+		// Initialize UserDataService for each test
+		theUserDataService = new UserDataService();
+		// Ensure the test directory is clean before each test
+		FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+
+		theUserDataService.createAllProgramDirectories();
+	}
+
+	@AfterEach
+	public void tearDown() {
+		// Clean up after each test by deleting the test directory and its contents
+		FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+	}
 
 	@Test
 	void testGetGoogleAuthenticatorBarCode() {
@@ -49,7 +71,7 @@ class TwoFactorAuthenticationServiceTest {
 		assertTrue(file.exists(), "QR Code image file was not created.");
 
 		// Cleanup
-		Files.delete(Paths.get(filePath));
+//		Files.delete(Paths.get(filePath));
 	}
 
 	@Test

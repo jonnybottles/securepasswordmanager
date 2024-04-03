@@ -2,6 +2,7 @@ package com.jgm.securepasswordmanager.controllers;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,9 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.File;
 
 public class TwoFactorSetupController {
 
@@ -36,14 +40,46 @@ public class TwoFactorSetupController {
 		// This is where I would pull the users email address, the secret key and then
 		// generate the QR code
 		theAuthenticationService = new AuthenticationService();
+//		generateAndDisplayQRCode();
+
+	}
+
+	public void generateAndDisplayQRCode() {
+		String qRCodePath = DirectoryPath.QR_CODE_DIRECTORY + "/" + theNewUser.getUserName() + "_qr_code.png";
+
+		// Generate QR Code Image
+		if (!theAuthenticationService.generateQRCode(theNewUser, qRCodePath)) {
+			displayErrorAlert("2FA Setup Error", "2FA Setup Error", "Error Generating QR Code.");
+		}
+
+		//Load QR Code Image
+		File qrImageFile = new File(qRCodePath);
+		if (qrImageFile.exists()) {
+			Image qrImage = new Image(qrImageFile.toURI().toString());
+			qrCodeImageView.setImage(qrImage);
+		} else {
+			displayErrorAlert("2FA Setup Error", "2FA Setup Error", "QR code image file now found.");
+		}
+
+
 	}
 
 	@FXML
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = authenticationCodeField.getText().trim();
-		if (authenticationCode.equals("goodcode")) {
+		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK")) {
 			theNewUser.setHasRegisteredTwoFactorAuthentication(true);
+
+
+
+			String userName = theNewUser.getUserName();
+			String password = theNewUser.getPassword();
+
 			theAuthenticationService.saveUser(theNewUser);
+
+
+			theNewUser = theAuthenticationService.login(userName, password);
+
 			qrCodeVertificationLabel.setText("Two factor authentication setup successfully.\n Returning to login screen...");
 			qrCodeVertificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
 			pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login", 4);

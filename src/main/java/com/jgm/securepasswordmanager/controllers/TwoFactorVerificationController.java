@@ -33,10 +33,13 @@ public class TwoFactorVerificationController {
 		theAuthenticationService = new AuthenticationService();
 	}
 
+
 	@FXML
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = OTPCodeField.getText().trim();
-		if (authenticationCode.equals("goodcode")) {
+		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK")) {
+
+
 			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");
 			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
 			pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
@@ -46,6 +49,21 @@ public class TwoFactorVerificationController {
 		}
 
 	}
+
+
+//	@FXML
+//	private void handleVerifyButtonClicked(ActionEvent event) {
+//		String authenticationCode = OTPCodeField.getText().trim();
+//		if (authenticationCode.equals("goodcode")) {
+//			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");
+//			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+//			pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
+//		} else {
+//			OTPVerificationLabel.setText("Invalid authentication code.\n Please wait for the next code and try again...");
+//			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+//		}
+//
+//	}
 
 	@FXML
 	private void handleCancelButtonClicked(ActionEvent event) {

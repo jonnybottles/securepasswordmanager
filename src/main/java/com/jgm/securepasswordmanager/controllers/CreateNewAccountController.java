@@ -83,8 +83,19 @@ public class CreateNewAccountController {
     @FXML
     private void handleRegisterButtonClicked(ActionEvent event) {
         if (isAllInputValid()) {
+
+            String userName = theNewUser.getUserName();
+            String password = theNewUser.getPassword();
+
             boolean saveResult = theAuthenticationService.saveUser(theNewUser);
+
+
+
+
+//            boolean saveResult = theAuthenticationService.saveUser(theNewUser);
+
             if (saveResult) {
+                theNewUser = theAuthenticationService.login(userName, password);
                 bottomLabel.setText("Registration successful.\n Proceeding to two factor authentication setup...");
                 bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
                 pauseAndLoadTwoFactorSetupController(event, "/com/jgm/securepasswordmanager/two_factor_setup.fxml",
@@ -156,7 +167,7 @@ public class CreateNewAccountController {
         pause.play();
     }
 
-    private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
+    private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User newUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
             try {
@@ -164,13 +175,13 @@ public class CreateNewAccountController {
                 Parent root = loader.load();
 
                 TwoFactorSetupController twoFactorSetupController = loader.getController();
-                twoFactorSetupController.setUser(theNewUser);
+                twoFactorSetupController.setUser(newUser); // Make sure to implement this method in TwoFactorSetupController
+                twoFactorSetupController.generateAndDisplayQRCode(); // Now this can be called since the user has been set
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Two Factor Authentication Setup");
                 stage.setScene(scene);
-
                 stage.show();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -178,6 +189,7 @@ public class CreateNewAccountController {
         });
         pause.play();
     }
+
 
 
 
