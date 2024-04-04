@@ -45,8 +45,9 @@ public class AuthenticationService {
     }
 
     public boolean generateQRCode(User theUser, String qRCodePath) {
+        //QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK
         String barCode = twoFactorAuthenticationService.getGoogleAuthenticatorBarCode("QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
-                theUser.getEmailAddress(), "Butler Cyber Technologies");
+                theUser.getEmailAddress(), "Secure Password Manager");
 
         try {
             twoFactorAuthenticationService.createQRCode(barCode, qRCodePath, 200, 200);

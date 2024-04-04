@@ -123,7 +123,6 @@ public class LoginController {
     }
 
 
-
     private void loadController(ActionEvent event, String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));

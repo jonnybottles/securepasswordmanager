@@ -67,6 +67,7 @@ public class TwoFactorSetupController {
 	@FXML
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = authenticationCodeField.getText().trim();
+
 		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK")) {
 			theNewUser.setHasRegisteredTwoFactorAuthentication(true);
 

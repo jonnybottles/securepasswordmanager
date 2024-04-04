@@ -15,12 +15,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
 
 public class TwoFactorAuthenticationService {
+
+	private static final Base32 theBase32 = new Base32();
 
 
 
 	public String getGoogleAuthenticatorBarCode(String secretKey, String emailAddress, String issuer) {
+//		byte[] bytes = secretKey.getBytes();
+//		String base32EncodedSecretKey = theBase32.encodeToString(bytes);
 		try {
 			return "otpauth://totp/"
 					+ URLEncoder.encode(issuer + ":" + emailAddress, "UTF-8").replace("+", "%20")
@@ -40,9 +45,18 @@ public class TwoFactorAuthenticationService {
 		}
 	}
 
-	public String getTOTPCode(String secretKey) {
+	public static String generateSecretKey() {
+		SecureRandom random = new SecureRandom();
+		byte[] bytes = new byte[10]; // 80 bits
+		random.nextBytes(bytes);
 		Base32 base32 = new Base32();
-		byte[] bytes = base32.decode(secretKey);
+		String secretKey = base32.encodeToString(bytes).replace("=", ""); // Remove optional padding
+		return secretKey;
+	}
+
+	public String getTOTPCode(String secretKey) {
+//		Base32 base32 = new Base32();
+		byte[] bytes = theBase32.decode(secretKey);
 		String hexKey = Hex.encodeHexString(bytes);
 		return TOTP.getOTP(hexKey);
 	}
