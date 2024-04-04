@@ -118,7 +118,7 @@ public class TwoFactorVerificationController {
 					stage.show();
 
 					if (!theLoadedUser.getHasCreatedMasterPassword()) {
-						passwordManagerController.pauseAndLoadMasterPasswordController("/com/jgm/securepasswordmanager/master_password.fxml", 0, theLoadedUser);
+						passwordManagerController.pauseAndLoadMasterPasswordController("/com/jgm/securepasswordmanager/master_password.fxml",  theLoadedUser);
 					}
 				} catch (IOException ex) {
 					ex.printStackTrace();

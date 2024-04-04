@@ -23,7 +23,7 @@ public class MasterPasswordController {
 	private Label validatePasswordLabel;
 
 	private User theLoadedUser;
-	
+
 	private AuthenticationService theAuthenticationService;
 
 	@FXML
@@ -56,6 +56,7 @@ public class MasterPasswordController {
 			theLoadedUser = theAuthenticationService.login(userName, password);
 
 			closeCurrentStage(event);
+
 		} else {
 			validatePasswordLabel.setText("Passwords do not match.");
 			validatePasswordLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
@@ -94,5 +95,9 @@ public class MasterPasswordController {
 			throw new IllegalArgumentException("Cannot set a null User.");
 		}
 		this.theLoadedUser = user;
+	}
+
+	public User getUser() {
+		return this.theLoadedUser;
 	}
 }
