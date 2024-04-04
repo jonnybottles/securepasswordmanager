@@ -52,7 +52,13 @@ public class UserDataService {
         List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialObservablelList());
         user.setWebsiteCredentialNormalList(credentialList); // Set the normal list for serialization
 
-        encryptUserData(user); // Encrypt after setting the websiteCredentialNormalList
+        encryptUserAccountPassword(user);
+
+        if (user.getHasCreatedMasterPassword()) {
+            encryptUserWebsites(user); // Encrypt after setting the websiteCredentialNormalList
+        }
+
+
 
         try (Writer writer = new FileWriter(userDataFilename)) {
             // Serialize the user with the normal list
@@ -76,8 +82,11 @@ public class UserDataService {
                     try (Reader reader = new FileReader(file)) {
                         User user = theGson.fromJson(reader, User.class);
 
-                        decryptUserData(user); // Decrypt before setting the observable list
+                        decryptUserAccountPassword(user);
 
+                        if (user.getHasCreatedMasterPassword()) {
+                            decryptUserWebsites(user); // Encrypt after setting the websiteCredentialNormalList
+                        }
                         // Convert List back to ObservableList after deserialization
                         ObservableList<WebsiteCredential> observableList =
                                 FXCollections.observableArrayList(user.getWebsiteCredentialNormalList());
@@ -95,24 +104,32 @@ public class UserDataService {
     }
 
 
-    private static void encryptUserData(User user) {
-        user.setPassword(EncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
+    private static void encryptUserAccountPassword(User user) {
+        user.setPassword(EncryptionService.encrypt(user.getPassword(),"secretkey", "somerandomsalt"));
+
+    }
+
+    private static void encryptUserWebsites(User user) {
         List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialObservablelList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
             webSiteCred.setWebSitePassword(EncryptionService.encrypt(webSiteCred.getWebSitePassword(),
-                    "thesecretkey", "somerandomsalt"));
+                    user.getMasterPassword(), "somerandomsalt"));
         }
     }
 
-    private static void decryptUserData(User user) {
-        String theUsersDecryptedPassword = EncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt");
+    private static void decryptUserAccountPassword(User user) {
+        String theUsersDecryptedPassword = EncryptionService.decrypt(user.getPassword(), "secretkey", "somerandomsalt");
         user.setPassword(theUsersDecryptedPassword);
+    }
+
+    private static void decryptUserWebsites(User user) {
+
         List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialNormalList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
             webSiteCred.setWebSitePassword(EncryptionService.decrypt(webSiteCred.getWebSitePassword(),
-                    "thesecretkey", "somerandomsalt"));
+                    user.getMasterPassword(), "somerandomsalt"));
         }
     }
 
