@@ -12,12 +12,9 @@ import java.util.List;
 public class AuthenticationService {
 
     private List<User> theLoadedUsers;
-    private UserDataService theUserDataService;
-    private TwoFactorAuthenticationService twoFactorAuthenticationService;
+
     public AuthenticationService() {
         this.theLoadedUsers = new ArrayList<User>();
-        this.theUserDataService = new UserDataService();
-        this.twoFactorAuthenticationService = new TwoFactorAuthenticationService();
     }
 
     public User login(String userName, String password) {
@@ -37,7 +34,7 @@ public class AuthenticationService {
     }
 
     public boolean saveUser(User theUser) {
-        if(theUserDataService.writeUserToFile(theUser)) {
+        if(UserDataService.writeUserToFile(theUser)) {
             populateUserList();
             return true;
         }
@@ -46,11 +43,11 @@ public class AuthenticationService {
 
     public boolean generateQRCode(User theUser, String qRCodePath) {
         //QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK
-        String barCode = twoFactorAuthenticationService.getGoogleAuthenticatorBarCode("QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
+        String barCode = TwoFactorAuthenticationService.getGoogleAuthenticatorBarCode("QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
                 theUser.getEmailAddress(), "Secure Password Manager");
 
         try {
-            twoFactorAuthenticationService.createQRCode(barCode, qRCodePath, 200, 200);
+            TwoFactorAuthenticationService.createQRCode(barCode, qRCodePath, 200, 200);
             return true;
         } catch (WriterException | IOException e) {
             System.out.println(e);
@@ -60,13 +57,13 @@ public class AuthenticationService {
     }
 
     public boolean registerTwoFactorAuthentication(String userCode, String secretKey) {
-		return twoFactorAuthenticationService.validateAuthenticationCode(userCode, secretKey);
+		return TwoFactorAuthenticationService.validateAuthenticationCode(userCode, secretKey);
 	}
 
 
     public boolean populateUserList() {
         // Attempt to load the list of users from file.
-        List<User> tempUserList = theUserDataService.loadUsersFromFile();
+        List<User> tempUserList = UserDataService.loadUsersFromFile();
 
         // Check if the list is null which means loading was unsuccessful
         if (tempUserList == null || tempUserList.isEmpty()) {

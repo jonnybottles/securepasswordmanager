@@ -22,16 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserDataServiceTest {
 
-    private UserDataService theUserDataService;
 
     @BeforeEach
     public void setUp() {
         // Initialize UserDataService for each test
-        theUserDataService = new UserDataService();
+
         // Ensure the test directory is clean before each test
         FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
 
-        theUserDataService.createAllProgramDirectories();
+        UserDataService.createAllProgramDirectories();
     }
 
 //    @AfterEach
@@ -61,7 +60,7 @@ public class UserDataServiceTest {
         User theUser = prepareUserData();
 
         // Attempt to write user to file and verify success
-        assertTrue(theUserDataService.writeUserToFile(theUser));
+        assertTrue(UserDataService.writeUserToFile(theUser));
 
         // Verify that the file now exists
         File userFile = new File(DirectoryPath.USERS_DIRECTORY, theUser.getUserName() + ".json");
@@ -72,10 +71,10 @@ public class UserDataServiceTest {
     public void testLoadUsersFromFile() {
         // Prepare and write a user to file for testing load functionality
         User theUser = prepareUserData();
-        assertTrue(theUserDataService.writeUserToFile(theUser));
+        assertTrue(UserDataService.writeUserToFile(theUser));
 
         // Load users from file and verify that the list is not empty
-        List<User> users = theUserDataService.loadUsersFromFile();
+        List<User> users = UserDataService.loadUsersFromFile();
         assertFalse(users.isEmpty());
 
         // Verify that loaded user details match those of the written user
@@ -97,9 +96,9 @@ public class UserDataServiceTest {
         System.out.println("User information before writing to file:");
         System.out.println(theUser);
 
-        assertTrue(theUserDataService.writeUserToFile(theUser)); // Write the user to file
+        assertTrue(UserDataService.writeUserToFile(theUser)); // Write the user to file
 
-        List<User> theLoadedUsers = theUserDataService.loadUsersFromFile(); // Load users from file
+        List<User> theLoadedUsers = UserDataService.loadUsersFromFile(); // Load users from file
 
         // Assert that loaded user matches the original user
         assertEquals(1, theLoadedUsers.size());

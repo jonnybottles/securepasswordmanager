@@ -23,9 +23,8 @@ public class TwoFactorAuthenticationService {
 
 
 
-	public String getGoogleAuthenticatorBarCode(String secretKey, String emailAddress, String issuer) {
-//		byte[] bytes = secretKey.getBytes();
-//		String base32EncodedSecretKey = theBase32.encodeToString(bytes);
+	public static String getGoogleAuthenticatorBarCode(String secretKey, String emailAddress, String issuer) {
+
 		try {
 			return "otpauth://totp/"
 					+ URLEncoder.encode(issuer + ":" + emailAddress, "UTF-8").replace("+", "%20")
@@ -36,7 +35,7 @@ public class TwoFactorAuthenticationService {
 		}
 	}
 
-	public void createQRCode(String barCodeData, String filePath, int height, int width)
+	public static void createQRCode(String barCodeData, String filePath, int height, int width)
 			throws WriterException, IOException {
 		BitMatrix matrix = new MultiFormatWriter().encode(barCodeData, BarcodeFormat.QR_CODE,
 				width, height);
@@ -49,19 +48,20 @@ public class TwoFactorAuthenticationService {
 		SecureRandom random = new SecureRandom();
 		byte[] bytes = new byte[10]; // 80 bits
 		random.nextBytes(bytes);
-		Base32 base32 = new Base32();
-		String secretKey = base32.encodeToString(bytes).replace("=", ""); // Remove optional padding
+		// Use the static Base32 instance
+		String secretKey = theBase32.encodeToString(bytes).replace("=", ""); // Remove optional padding
 		return secretKey;
 	}
 
-	public String getTOTPCode(String secretKey) {
+
+	public static String getTOTPCode(String secretKey) {
 //		Base32 base32 = new Base32();
 		byte[] bytes = theBase32.decode(secretKey);
 		String hexKey = Hex.encodeHexString(bytes);
 		return TOTP.getOTP(hexKey);
 	}
 
-	public boolean validateAuthenticationCode(String userCode, String secretKey) {
+	public static boolean validateAuthenticationCode(String userCode, String secretKey) {
 		if (userCode.equals(getTOTPCode(secretKey))) {
 			return true;
 		}

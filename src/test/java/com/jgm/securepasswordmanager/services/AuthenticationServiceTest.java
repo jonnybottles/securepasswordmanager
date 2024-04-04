@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
 
-    private UserDataService userDataService;
     private AuthenticationService authService;
     private final File userDataDirectory = new File("user_data");
 
     @BeforeEach
     void setUp() {
         authService = new AuthenticationService();
-        userDataService = new UserDataService();
+
+        UserDataService.createAllProgramDirectories();
 
 
         // Simulate UserDataService by directly manipulating test data
@@ -35,8 +35,8 @@ class AuthenticationServiceTest {
 
 
         // Assuming AuthenticationService can directly accept test users
-        userDataService.writeUserToFile(user1);
-        userDataService.writeUserToFile(user2);
+        UserDataService.writeUserToFile(user1);
+        UserDataService.writeUserToFile(user2);
 
     }
 

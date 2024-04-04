@@ -14,40 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataService {
-//    private final String USERS_DIRECTORY_PATH = "data/user_data";
-//    private final String USERS_MASTER_KEY_PATH = "data/user_master_keys";
-//    private final String QR_CODE_PATH = "data/qr_codes";
-    private EncryptionService theEncryptionService;
-    private Gson theGson;
 
-    public UserDataService() {
-        this.theEncryptionService = new EncryptionService();
-        this.theGson = new GsonBuilder().setPrettyPrinting().create();
-    }
-
-//    // Creates the user_data directory if it doesn't already exist
-//    public boolean createUserDataDirectory() {
-//
-//        // Obtain the path to the users current working directory / where the program was executed from.
-//        String currentPath = System.getProperty("user.dir");
-//
-//        // Creates user_data directory path by concating current path
-//        // with OS specific separator (e.g. / or \) and the user data directory
-//        File userDataDirectory = new File(currentPath + File.separator + USERS_DIRECTORY_PATH);
-//
-//        if (!userDataDirectory.exists()) {
-//            try {
-//                boolean wasCreated = userDataDirectory.mkdirs();
-//                if (!wasCreated) {
-//                    return false;
-//                }
-//            } catch (SecurityException e) {
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
+    private static final Gson theGson = new GsonBuilder().setPrettyPrinting().create();;
 
     /** Creates a directory if it does not exist already. */
     private static boolean createDirectoryIfNotExists(String directoryName) {
@@ -58,25 +26,25 @@ public class UserDataService {
         return true;
     }
 
-    private boolean createUserDataDirectory() {
+    private static boolean createUserDataDirectory() {
         return createDirectoryIfNotExists(DirectoryPath.USERS_DIRECTORY);
     }
 
-    private boolean createUserMasterKeyDirectory() {
+    private static boolean createUserMasterKeyDirectory() {
         return createDirectoryIfNotExists(DirectoryPath.USERS_MASTER_KEY);
     }
 
-    private boolean createQRCodeDirectory() {
+    private static boolean createQRCodeDirectory() {
         return createDirectoryIfNotExists(DirectoryPath.QR_CODE_DIRECTORY);
     }
 
 
 
-    public boolean createAllProgramDirectories() {
+    public static boolean createAllProgramDirectories() {
         return createUserDataDirectory() && createUserMasterKeyDirectory() && createQRCodeDirectory();
     }
 
-    public boolean writeUserToFile(User user) {
+    public static boolean writeUserToFile(User user) {
 
         String userDataFilename = DirectoryPath.USERS_DIRECTORY + File.separator + user.getUserName() + ".json";
 
@@ -96,7 +64,7 @@ public class UserDataService {
         }
     }
 
-    public List<User> loadUsersFromFile() {
+    public static List<User> loadUsersFromFile() {
         List<User> users = new ArrayList<>();
         File directory = new File(DirectoryPath.USERS_DIRECTORY);
 
@@ -126,53 +94,24 @@ public class UserDataService {
         return users;
     }
 
-//    public ObservableList<User> loadUsersFromFile() {
-//        ObservableList<User> users = FXCollections.observableArrayList();
-//        File directory = new File(USERS_DIRECTORY_PATH);
-//
-//        if (directory.exists() && directory.isDirectory()) {
-//            File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
-//
-//            if (files != null) {
-//                for (File file : files) {
-//                    try (Reader reader = new FileReader(file)) {
-//                        User user = theGson.fromJson(reader, User.class);
-//
-//                        decryptUserData(user); // Decrypt before setting the observable list
-//
-//                        // Convert List back to ObservableList after deserialization
-//                        ObservableList<WebsiteCredential> observableList =
-//                                FXCollections.observableArrayList(user.getWebsiteCredentialNormalList());
-//                        user.setWebsiteCredentialObservablelList(observableList); // Set the observable list
-//
-//                        users.add(user);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//        return users;
-//    }
 
-
-    private void encryptUserData(User user) {
-        user.setPassword(theEncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
+    private static void encryptUserData(User user) {
+        user.setPassword(EncryptionService.encrypt(user.getPassword(), "thesecretkey", "somerandomsalt"));
         List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialObservablelList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
-            webSiteCred.setWebSitePassword(theEncryptionService.encrypt(webSiteCred.getWebSitePassword(),
+            webSiteCred.setWebSitePassword(EncryptionService.encrypt(webSiteCred.getWebSitePassword(),
                     "thesecretkey", "somerandomsalt"));
         }
     }
 
-    private void decryptUserData(User user) {
-        String theUsersDecryptedPassword = theEncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt");
+    private static void decryptUserData(User user) {
+        String theUsersDecryptedPassword = EncryptionService.decrypt(user.getPassword(), "thesecretkey", "somerandomsalt");
         user.setPassword(theUsersDecryptedPassword);
         List<WebsiteCredential> theUsersWebSiteCreds = user.getWebsiteCredentialNormalList();
 
         for (WebsiteCredential webSiteCred : theUsersWebSiteCreds) {
-            webSiteCred.setWebSitePassword(theEncryptionService.decrypt(webSiteCred.getWebSitePassword(),
+            webSiteCred.setWebSitePassword(EncryptionService.decrypt(webSiteCred.getWebSitePassword(),
                     "thesecretkey", "somerandomsalt"));
         }
     }
