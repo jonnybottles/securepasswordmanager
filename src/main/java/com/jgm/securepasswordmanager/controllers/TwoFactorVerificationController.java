@@ -3,6 +3,7 @@ package com.jgm.securepasswordmanager.controllers;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,6 +44,7 @@ public class TwoFactorVerificationController {
 
 			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");
 			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+
 			pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
 		} else {
 			OTPVerificationLabel.setText("Invalid authentication code.\n Please wait for the next code and try again...");
@@ -99,27 +101,66 @@ public class TwoFactorVerificationController {
 	private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds, User theLoadedUser) {
 		PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
 		pause.setOnFinished(e -> {
-			try {
-				FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-				Parent root = loader.load();
+			Platform.runLater(() -> { // Schedule this to run later
+				try {
+					FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+					Parent root = loader.load();
 
-				PasswordManagerController passwordManagerController = loader.getController();
-				passwordManagerController.setUser(theLoadedUser);
+					PasswordManagerController passwordManagerController = loader.getController();
+					passwordManagerController.setUser(theLoadedUser);
 
-				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				Scene scene = new Scene(root);
-				stage.setTitle("Secure Password Vault");
-				stage.setScene(scene);
+					Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+					Scene scene = new Scene(root);
+					stage.setTitle("Secure Password Vault");
+					stage.setScene(scene);
 
-				// Adjust the window position as needed
-				stage.setX(400); // Set this value as needed to position the window
-				stage.show();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+					stage.setX(400); // Adjust as needed
+					stage.show();
+
+					if (!theLoadedUser.getHasCreatedMasterPassword()) {
+						passwordManagerController.pauseAndLoadMasterPasswordController("/com/jgm/securepasswordmanager/master_password.fxml", 0, theLoadedUser);
+					}
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			});
 		});
 		pause.play();
 	}
+
+//
+//	private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds, User theLoadedUser) {
+//		PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+//		pause.setOnFinished(e -> {
+//			try {
+//				FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//				Parent root = loader.load();
+//
+//				PasswordManagerController passwordManagerController = loader.getController();
+//				passwordManagerController.setUser(theLoadedUser);
+//
+//				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//				Scene scene = new Scene(root);
+//				stage.setTitle("Secure Password Vault");
+//				stage.setScene(scene);
+//
+//				// Adjust the window position as needed
+//				stage.setX(400); // Set this value as needed to position the window
+//				stage.show();
+//
+//				if (!theLoadedUser.getHasCreatedMasterPassword()) {
+//						passwordManagerController.pauseAndLoadMasterPasswordController("/com/jgm/securepasswordmanager/master_password.fxml", 0, theLoadedUser);
+//				}
+//
+//
+//			} catch (IOException ex) {
+//				ex.printStackTrace();
+//			}
+//		});
+//		pause.play();
+//	}
+
+
 
 	private void pauseAndLoadController(ActionEvent event, String fxmlPath, String title, double pauseSeconds) {
 		PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));

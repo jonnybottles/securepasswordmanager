@@ -4,6 +4,7 @@ import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
 import com.jgm.securepasswordmanager.services.UserDataService;
+import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,7 +15,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,15 +55,12 @@ public class PasswordManagerController {
 
     private User theLoadedUser;
 
-    private UserDataService theUserDataService;
-
     private AuthenticationService theAuthenticationService;
 
 
 
     // Initializes all classes / data
     public void initialize() {
-        theUserDataService = new UserDataService();
         theAuthenticationService = new AuthenticationService();
 
 //        loadTestUserAndWebsites();
@@ -68,8 +68,6 @@ public class PasswordManagerController {
 
         createDeleteContextMenu();
         tableView.setPlaceholder(new Label("Your Secure Password Vault is Currently Empty."));
-
-
 
     }
 
@@ -181,6 +179,23 @@ public class PasswordManagerController {
             e.printStackTrace();
         }
     }
+
+    private void loadController(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            // Directly use the main stage from the current scene without needing an event
+            Stage stage = (Stage) mainBorderPane.getScene().getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.setX(800); // Set position if necessary
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     // Event handler for adding a new website credential.
     // This loads the AddPasswordController, which opens a dialog for the
@@ -297,6 +312,79 @@ public class PasswordManagerController {
             alert.showAndWait();
         }
     }
+
+    public void pauseAndLoadMasterPasswordController(String fxmlPath, double pauseSeconds, User theLoadedUser) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+
+                MasterPasswordController masterPasswordController = loader.getController();
+                masterPasswordController.setUser(theLoadedUser);
+
+                // Creating a new Stage for the Master Password window
+                Stage masterPasswordStage = new Stage();
+                masterPasswordStage.setTitle("Create Master Password");
+                masterPasswordStage.setX(700);
+                masterPasswordStage.setY(325);
+
+                masterPasswordStage.initModality(Modality.WINDOW_MODAL);
+
+                // Assuming you have a reference to the current window's stage:
+                Stage primaryStage = (Stage) mainBorderPane.getScene().getWindow();
+                masterPasswordStage.initOwner(primaryStage);
+
+                Scene scene = new Scene(root);
+                masterPasswordStage.setScene(scene);
+
+                // Set onCloseRequest event handler
+                masterPasswordStage.setOnCloseRequest(windowEvent -> {
+                    // Load the login controller when the window is closed
+                    loadController("/com/jgm/securepasswordmanager/login.fxml");
+                });
+
+                masterPasswordStage.showAndWait();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        pause.play();
+    }
+
+
+
+
+//    public void pauseAndLoadMasterPasswordController(String fxmlPath, double pauseSeconds, User theLoadedUser) {
+//        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+//        pause.setOnFinished(e -> {
+//            try {
+//                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//                Parent root = loader.load();
+//
+//                MasterPasswordController masterPasswordController = loader.getController();
+//                // Assuming setUser is a method in MasterPasswordController that you use to pass the User object
+//                masterPasswordController.setUser(theLoadedUser);
+//
+//                // Here you need access to your scene or any node/control within your scene.
+//                // For example, if you have a button or label with fx:id="myButton" you can use it like:
+//                // Stage stage = (Stage) myButton.getScene().getWindow();
+//
+//                // If you're in a method where you don't have direct access, you might need to store the stage or a node as a class variable when your controller initializes.
+//                Stage stage = (Stage) mainBorderPane.getScene().getWindow(); // mainBorderPane is just an example, use any node/control you have in your scene.
+//
+//                Scene scene = new Scene(root);
+//                stage.setTitle("Create Master Password");
+//                stage.setScene(scene);
+//
+//                // You no longer need to check if the user has created a master password here because this method's purpose is just to show the master password setup.
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        });
+//        pause.play();
+//    }
 
 
 //    @FXML

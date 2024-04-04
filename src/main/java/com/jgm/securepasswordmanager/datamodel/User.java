@@ -15,6 +15,8 @@ public class User {
     private String password;
     private String secretKeyFor2FABarcode;
     private boolean hasRegisteredTwoFactorAuthentication;
+    private String masterPassword;
+    private boolean hasCreatedMasterPassword;
 
 
     // Transient: Gson will ignore this field during serialization/deserialization
@@ -123,6 +125,22 @@ public class User {
 
     public void setSecretKeyFor2FABarcode(String secretKeyFor2FABarcode) {
         this.secretKeyFor2FABarcode = secretKeyFor2FABarcode;
+    }
+
+    public String getMasterPassword() {
+        return masterPassword;
+    }
+
+    public void setMasterPassword(String masterPassword) {
+        this.masterPassword = masterPassword;
+    }
+
+    public boolean getHasCreatedMasterPassword() {
+        return hasCreatedMasterPassword;
+    }
+
+    public void setHasCreatedMasterPassword(boolean hasCreatedMasterPassword) {
+        this.hasCreatedMasterPassword = hasCreatedMasterPassword;
     }
 
     // This method returns a normal website Credential list, used for writing to Json
