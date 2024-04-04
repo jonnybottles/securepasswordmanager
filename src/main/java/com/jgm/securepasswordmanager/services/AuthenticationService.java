@@ -43,7 +43,8 @@ public class AuthenticationService {
 
     public boolean generateQRCode(User theUser, String qRCodePath) {
         //QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK
-        String barCode = TwoFactorAuthenticationService.getGoogleAuthenticatorBarCode("QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK",
+        String secretKey = theUser.getSecretKeyFor2FABarcode();
+        String barCode = TwoFactorAuthenticationService.getGoogleAuthenticatorBarCode(secretKey,
                 theUser.getEmailAddress(), "Secure Password Manager");
 
         try {

@@ -2,6 +2,7 @@ package com.jgm.securepasswordmanager.controllers;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.TwoFactorAuthenticationService;
 import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -47,9 +48,13 @@ public class TwoFactorSetupController {
 	public void generateAndDisplayQRCode() {
 		String qRCodePath = DirectoryPath.QR_CODE_DIRECTORY + "/" + theNewUser.getUserName() + "_qr_code.png";
 
+		String secretKey = TwoFactorAuthenticationService.generateSecretKey();
+		theNewUser.setSecretKeyFor2FABarcode(secretKey);
+
 		// Generate QR Code Image
 		if (!theAuthenticationService.generateQRCode(theNewUser, qRCodePath)) {
 			displayErrorAlert("2FA Setup Error", "2FA Setup Error", "Error Generating QR Code.");
+			theNewUser.setSecretKeyFor2FABarcode(null);
 		}
 
 		//Load QR Code Image
@@ -59,6 +64,8 @@ public class TwoFactorSetupController {
 			qrCodeImageView.setImage(qrImage);
 		} else {
 			displayErrorAlert("2FA Setup Error", "2FA Setup Error", "QR code image file now found.");
+			theNewUser.setSecretKeyFor2FABarcode(null);
+
 		}
 
 
@@ -68,7 +75,9 @@ public class TwoFactorSetupController {
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = authenticationCodeField.getText().trim();
 
-		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK")) {
+
+
+		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, theNewUser.getSecretKeyFor2FABarcode())) {
 			theNewUser.setHasRegisteredTwoFactorAuthentication(true);
 
 

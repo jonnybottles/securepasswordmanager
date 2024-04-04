@@ -45,10 +45,16 @@ public class TwoFactorAuthenticationService {
 	}
 
 	public static String generateSecretKey() {
+		// Secure random is a cryptographic random number generator
 		SecureRandom random = new SecureRandom();
+
+		// Fills the 10 byte array with random bytes generator by the secureRandom instance
+		// which is 80 bits in totla and is a common choice for TOTP secrets
 		byte[] bytes = new byte[10]; // 80 bits
 		random.nextBytes(bytes);
-		// Use the static Base32 instance
+
+		// Use the static Base32 instance to convert binary data into a string and replace and equal signs
+		// as they are not required for TOTP secret keys
 		String secretKey = theBase32.encodeToString(bytes).replace("=", ""); // Remove optional padding
 		return secretKey;
 	}

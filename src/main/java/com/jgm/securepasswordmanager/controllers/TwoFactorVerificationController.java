@@ -37,7 +37,8 @@ public class TwoFactorVerificationController {
 	@FXML
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = OTPCodeField.getText().trim();
-		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK")) {
+		String secretKey = theLoadedUser.getSecretKeyFor2FABarcode();
+		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, secretKey)) {
 
 
 			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");

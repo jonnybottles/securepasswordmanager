@@ -13,6 +13,7 @@ public class User {
     private String emailAddress;
     private String userName;
     private String password;
+    private String secretKeyFor2FABarcode;
     private boolean hasRegisteredTwoFactorAuthentication;
 
 
@@ -114,6 +115,14 @@ public class User {
 
     public void setHasRegisteredTwoFactorAuthentication(boolean hasRegisteredTwoFactorAuthentication) {
         this.hasRegisteredTwoFactorAuthentication = hasRegisteredTwoFactorAuthentication;
+    }
+
+    public String getSecretKeyFor2FABarcode() {
+        return secretKeyFor2FABarcode;
+    }
+
+    public void setSecretKeyFor2FABarcode(String secretKeyFor2FABarcode) {
+        this.secretKeyFor2FABarcode = secretKeyFor2FABarcode;
     }
 
     // This method returns a normal website Credential list, used for writing to Json
