@@ -1,7 +1,9 @@
 package com.jgm.securepasswordmanager.controllers;
 
+import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.LogParserService;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,23 +65,6 @@ public class CreateNewAccountController {
     }
 
 
-//    @FXML
-//    private void handleRegisterButtonClicked(ActionEvent event) {
-//        if (isAllInputValid()) {
-//            boolean saveResult = theAuthenticationService.saveUser(theNewUser);
-//            if (saveResult) {
-//                bottomLabel.setText("Registration successful.\n Returning to login screen...");
-//                bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
-//                pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login",  4);
-//            } else {
-//                System.out.println("Failed to register the user.");
-//                displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
-//            }
-//        } else {
-//            displayInformationalAlert("Invalid input", "Invalid input", theInformationalAlertMessage.toString());
-//        }
-//    }
-
     @FXML
     private void handleRegisterButtonClicked(ActionEvent event) {
         if (isAllInputValid()) {
@@ -100,10 +85,14 @@ public class CreateNewAccountController {
                 bottomLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
                 pauseAndLoadTwoFactorSetupController(event, "/com/jgm/securepasswordmanager/two_factor_setup.fxml",
                         4, theNewUser);
+                LogParserService.appendLog(new LogEntry("INFO", "Account creation success. User: " + userName));
+
             } else {
                   System.out.println("Failed to register the user.");
                   displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
-              }
+                LogParserService.appendLog(new LogEntry("SEVERE", "Account creation failure. User: " + userName));
+
+            }
 
         } else {
             displayInformationalAlert("Invalid input", "Invalid input", theInformationalAlertMessage.toString());

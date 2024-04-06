@@ -1,7 +1,9 @@
 package com.jgm.securepasswordmanager.controllers;
 
+import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.LogParserService;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -61,6 +63,7 @@ public class LoginController {
                         4, theLoadedUser);
             } else {
                 pauseAndLoadTwoFactorVerificationController(event, "/com/jgm/securepasswordmanager/two_factor_verification.fxml", 0, theLoadedUser);
+                LogParserService.appendLog(new LogEntry("INFO", "Login success. User: " + username));
 
             }
 
@@ -70,6 +73,7 @@ public class LoginController {
         } else {
             loginStatusLabel.setText("    Login failure.\n     Invalid username or password.");
             loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+            LogParserService.appendLog(new LogEntry("INFO", "Login failure. User: " + username));
         }
     }
 

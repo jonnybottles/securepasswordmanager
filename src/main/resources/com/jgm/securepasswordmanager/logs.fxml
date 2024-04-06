@@ -26,6 +26,10 @@
       <Button text="Account" maxWidth="Infinity" />
       <Button text="Settings" maxWidth="Infinity"/>
       <Button text="Log Out" maxWidth="Infinity" onAction="#onLogOutButtonClicked"/>
+      <Button text="Invisible Button 1" maxWidth="Infinity" visible="false"/>
+      <Button text="Invisible Button 2" maxWidth="Infinity" visible="false"/>
+      <Button text="Invisible Button 3" maxWidth="Infinity" visible="false"/>
+
       <Separator/>
       <HBox alignment="CENTER_LEFT" spacing="5">
         <Label text="Username:" style="-fx-font-weight: bold;"/>

@@ -134,6 +134,7 @@ public class LogsController {
 			Parent root = loader.load();
 			Stage stage = (Stage) ((event.getSource() instanceof Stage) ? event.getSource() : mainBorderPane.getScene().getWindow());
 			stage.setScene(new Scene(root));
+			stage.setX(800);
 			stage.show();
 		} catch (Exception e) {
 			e.printStackTrace();

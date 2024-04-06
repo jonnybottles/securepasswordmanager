@@ -1,7 +1,9 @@
 package com.jgm.securepasswordmanager.controllers;
 
+import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.LogParserService;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -39,34 +41,27 @@ public class TwoFactorVerificationController {
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = OTPCodeField.getText().trim();
 		String secretKey = theLoadedUser.getSecretKeyFor2FABarcode();
+
+		String userName = theLoadedUser.getUserName();
+
 		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, secretKey)) {
 
 
 			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");
 			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+			LogParserService.appendLog(new LogEntry("INFO", "Two factor authentication success. User: " + userName));
+
 
 			pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
 		} else {
 			OTPVerificationLabel.setText("Invalid authentication code.\n Please wait for the next code and try again...");
 			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+			LogParserService.appendLog(new LogEntry("INFO", "Two factor authentication failure. User: " + userName));
+
 		}
 
 	}
 
-
-//	@FXML
-//	private void handleVerifyButtonClicked(ActionEvent event) {
-//		String authenticationCode = OTPCodeField.getText().trim();
-//		if (authenticationCode.equals("goodcode")) {
-//			OTPVerificationLabel.setText("    Login successful.\n     Loading your secure password vault...");
-//			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
-//			pauseAndLoadPasswordManagerController(event, "/com/jgm/securepasswordmanager/password_manager.fxml", 4, theLoadedUser);
-//		} else {
-//			OTPVerificationLabel.setText("Invalid authentication code.\n Please wait for the next code and try again...");
-//			OTPVerificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
-//		}
-//
-//	}
 
 	@FXML
 	private void handleCancelButtonClicked(ActionEvent event) {

@@ -1,7 +1,9 @@
 package com.jgm.securepasswordmanager.controllers;
 
+import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.LogParserService;
 import com.jgm.securepasswordmanager.services.TwoFactorAuthenticationService;
 import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.animation.PauseTransition;
@@ -76,14 +78,15 @@ public class TwoFactorSetupController {
 		String authenticationCode = authenticationCodeField.getText().trim();
 
 
+		// MOVED THIS UP HERE FOR LOGGIN
+		String userName = theNewUser.getUserName();
+		String password = theNewUser.getPassword();
 
 		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, theNewUser.getSecretKeyFor2FABarcode())) {
 			theNewUser.setHasRegisteredTwoFactorAuthentication(true);
 
+			// IT WAS DOWN HERE IN CASE ANYTHING BREAKS!
 
-
-			String userName = theNewUser.getUserName();
-			String password = theNewUser.getPassword();
 
 			theAuthenticationService.saveUser(theNewUser);
 
@@ -93,9 +96,13 @@ public class TwoFactorSetupController {
 			qrCodeVertificationLabel.setText("Two factor authentication setup successfully.\n Returning to login screen...");
 			qrCodeVertificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
 			pauseAndLoadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login", 4);
+			LogParserService.appendLog(new LogEntry("INFO", "Two factor setup success. User: " + userName));
+
 		} else {
 			qrCodeVertificationLabel.setText("Invalid authentication code.\n Please wait for the next code and try again...");
 			qrCodeVertificationLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
+			LogParserService.appendLog(new LogEntry("INFO", "Two factor setup failure. User: " + userName));
+
 
 		}
 

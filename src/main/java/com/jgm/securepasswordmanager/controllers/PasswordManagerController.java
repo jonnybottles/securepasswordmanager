@@ -1,8 +1,10 @@
 package com.jgm.securepasswordmanager.controllers;
 
+import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import com.jgm.securepasswordmanager.services.LogParserService;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -84,7 +86,6 @@ public class PasswordManagerController {
                     if (index >= 0 && index < getTableView().getItems().size()) {
                         WebsiteCredential credential = getTableView().getItems().get(index);
                         String displayedPassword = credential.getDisplayedPassword();
-                        System.out.println("Password for " + credential.getWebSiteName() + ": " + displayedPassword); // Debug line
                         setText(displayedPassword);
                     } else {
                         setText(null);
@@ -175,31 +176,32 @@ public class PasswordManagerController {
 
 
     private void handleDeleteAction() {
-        WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
-        if (websiteToDelete != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Website Credential");
+        WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
+        if(selectedCredential == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Website Credential Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("PLease select the website credential you want to delete.");
+            alert.showAndWait();
+            return;
+        }
 
-            // Set the header text with the details of the credential to be deleted
-            alert.setHeaderText("Are you sure you want to delete the selected credentials: \n\n" +
-                    "Website: " + websiteToDelete.getWebSiteName() + "\n" +
-                    "User Name: " + websiteToDelete.getWebSiteUserName());
-            alert.setContentText("Are you sure?\n");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Credential");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to delete the selected credentials: \n" +
+                "Website: " + selectedCredential.getWebSiteName() + "\n" +
+                "User Name: " + selectedCredential.getWebSiteUserName());
 
-            // Show the alert and wait for the user's response
-            Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isPresent() && result.get() == ButtonType.OK) {
+            LogParserService.appendLog(new LogEntry("INFO", "Website credential deleted successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + selectedCredential.getWebSiteName() + ", Website Username: " + selectedCredential.getWebSiteUserName()));
+            theLoadedUser.removeCredential(selectedCredential);
 
-            // If the OK button is clicked, remove the credential from the user's list
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                theLoadedUser.removeCredential(websiteToDelete);
-                // Assuming AuthenticationService is a service you've implemented for managing users
-                theAuthenticationService.saveUser(theLoadedUser);
-                theLoadedUser = theAuthenticationService.login(theLoadedUser.getUserName(), theLoadedUser.getPassword());
+            // TODO Call Delete website credential in data services here once created
+            // TODO Or just overwrite the file which would be easier
 
-                // Update the TableView to display the list of credentials excluding the deleted one
-                tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-                tableView.refresh();
-            }
+
         }
     }
 
@@ -215,6 +217,8 @@ public class PasswordManagerController {
     @FXML
     public void onLogOutButtonClicked(ActionEvent event) {
         loadController(event, "/com/jgm/securepasswordmanager/login.fxml");
+        LogParserService.appendLog(new LogEntry("INFO", "Log out success. User: " + theLoadedUser.getUserName()));
+
     }
 
     private void loadController(ActionEvent event, String fxmlPath) {
@@ -303,6 +307,9 @@ public class PasswordManagerController {
             tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
             tableView.refresh();
 
+            LogParserService.appendLog(new LogEntry("INFO", "Website credential created successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + newItem.getWebSiteName() + ", Website Username: " + newItem.getWebSiteUserName()));
+
+
             // Select the new credential in the TableView to highlight it for the user
             int newIndex = theLoadedUser.getWebsiteCredentialObservablelList().indexOf(newItem);
             tableView.getSelectionModel().select(newIndex);
@@ -354,6 +361,9 @@ public class PasswordManagerController {
 
                 tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
                 tableView.refresh(); // Refresh the TableView to show the updated data
+
+                LogParserService.appendLog(new LogEntry("INFO", "Website credential edited successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + newCredential.getWebSiteName() + ", Website Username: " + newCredential.getWebSiteUserName()));
+
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
