@@ -3,12 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<BorderPane fx:id="mainBorderPane" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.jgm.securepasswordmanager.controllers.PasswordManagerController"
-            prefHeight="475.0" prefWidth="1200.0">
+
+<BorderPane fx:id="mainBorderPane" xmlns:fx="http://javafx.com/fxml" fx:controller="com.jgm.securepasswordmanager.controllers.LogsController" prefHeight="475.0" prefWidth="1200.0">
 
   <!-- Left side panel -->
   <left>
@@ -24,24 +22,19 @@
         </ImageView>
       </HBox>
       <Separator/>
-      <Button text="Add Credential" onAction="#onAddWebsiteCredentialClicked" maxWidth="Infinity"/>
-      <Button text="Edit Credential" maxWidth="Infinity" onAction="#onEditWebsiteCredentialClicked"/>
-      <Button text="Delete Credential" onAction="#onDeleteWebsiteCredential" maxWidth="Infinity"/>
-      <Button text="Account" maxWidth="Infinity"/>
+      <Button text="Password Vault" onAction="#onReturnToPasswordVaultClicked" maxWidth="Infinity"/>
+      <Button text="Account" maxWidth="Infinity" />
       <Button text="Settings" maxWidth="Infinity"/>
-      <Button text="Logs" maxWidth="Infinity" onAction="#onLogsClicked"/>
       <Button text="Log Out" maxWidth="Infinity" onAction="#onLogOutButtonClicked"/>
       <Separator/>
       <HBox alignment="CENTER_LEFT" spacing="5">
         <Label text="Username:" style="-fx-font-weight: bold;"/>
         <Label fx:id="userNameLabel"/>
       </HBox>
-
       <HBox alignment="CENTER_LEFT" spacing="5">
         <Label text="Email:" style="-fx-font-weight: bold;"/>
         <Label fx:id="emailLabel"/>
       </HBox>
-
     </VBox>
   </left>
 
@@ -56,29 +49,20 @@
           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
         </columnResizePolicy>
         <columns>
-          <TableColumn text="Website">
+          <TableColumn fx:id="dateColumn" text="Date"/>
+          <TableColumn fx:id="timeColumn" text="Time"/>
+          <TableColumn fx:id="typeColumn" text="Log Type">
             <cellValueFactory>
-              <PropertyValueFactory property="webSiteName"/>
+              <PropertyValueFactory property="severity"/>
             </cellValueFactory>
           </TableColumn>
-          <TableColumn text="Username">
+          <TableColumn fx:id="messageColumn" text="Message">
             <cellValueFactory>
-              <PropertyValueFactory property="webSiteUserName"/>
-            </cellValueFactory>
-          </TableColumn>
-          <!-- The Password TableColumn setup should be done in the controller -->
-          <TableColumn text="Password" fx:id="passwordColumn">
-            <!-- This line is not needed and should be removed or commented out -->
-            <!-- <cellFactory><PropertyValueFactory property="passwordCellFactory"/></cellFactory> -->
-          </TableColumn>
-          <TableColumn text="Notes">
-            <cellValueFactory>
-              <PropertyValueFactory property="notes"/>
+              <PropertyValueFactory property="message"/>
             </cellValueFactory>
           </TableColumn>
         </columns>
       </TableView>
-
     </VBox>
   </center>
 

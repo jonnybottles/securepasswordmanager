@@ -8,6 +8,7 @@ module com.jgm.securepasswordmanager {
     requires com.google.zxing.javase;
     requires org.apache.commons.codec;
     requires totp;
+	requires java.logging;
 //    requires org.commons.codec;
 
 

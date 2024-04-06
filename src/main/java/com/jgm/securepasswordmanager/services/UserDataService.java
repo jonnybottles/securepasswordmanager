@@ -38,10 +38,14 @@ public class UserDataService {
         return createDirectoryIfNotExists(DirectoryPath.QR_CODE_DIRECTORY);
     }
 
+    private static boolean createLogsDirectory() {
+        return createDirectoryIfNotExists(DirectoryPath.LOGS_DIRECTORY);
+    }
+
 
 
     public static boolean createAllProgramDirectories() {
-        return createUserDataDirectory() && createUserMasterKeyDirectory() && createQRCodeDirectory();
+        return createUserDataDirectory() && createUserMasterKeyDirectory() && createQRCodeDirectory() && createLogsDirectory();
     }
 
     public static boolean writeUserToFile(User user) {

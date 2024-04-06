@@ -3,22 +3,18 @@ package com.jgm.securepasswordmanager.controllers;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
-import com.jgm.securepasswordmanager.services.UserDataService;
-import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +56,9 @@ public class PasswordManagerController {
 
     @FXML
     private TableColumn<WebsiteCredential, String> passwordColumn;
+
+    @FXML
+    private VBox centerVBox;
 
 
 
@@ -116,38 +115,14 @@ public class PasswordManagerController {
 
     }
 
-//    // Sets up a context menu on the TableView which will allow the user to
-//    // delete a credential via a right click option.
-//    private void createDeleteContextMenu() {
-//
-//        listContextMenu = new ContextMenu();
-//        // Create a delete option for the menu
-//        MenuItem deleteMenuItem = new MenuItem("Delete");
-//
-//        // Set the action to perform when the delete option is selected
-//        deleteMenuItem.setOnAction(actionEvent -> {
-//            // Get the selected item from the TableView
-//            WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
-//            // Call method to show confirmation dialog before deleting
-//            rightClickDeleteWebsiteCredentialAlert(websiteToDelete);
-//        });
-//
-//        // Add the delete option to the context menu
-//        listContextMenu.getItems().add(deleteMenuItem);
-//
-//        // Apply the context menu to each row in the TableView
-//        tableView.setRowFactory(tv -> {
-//            // Create a new TableRow for WebsiteCredential
-//            TableRow<WebsiteCredential> row = new TableRow<>();
-//            // Bind the context menu to the row, only show it when the row is not empty
-//            row.contextMenuProperty().bind(
-//                    Bindings.when(row.emptyProperty())
-//                            .then((ContextMenu) null)
-//                            .otherwise(listContextMenu)
-//            );
-//            return row;
-//        });
-//    }
+
+    @FXML
+    public void onLogsClicked() {
+        loadController("/com/jgm/securepasswordmanager/logs.fxml");
+    }
+
+
+
 
     private void createContextMenu() {
         listContextMenu = new ContextMenu();
