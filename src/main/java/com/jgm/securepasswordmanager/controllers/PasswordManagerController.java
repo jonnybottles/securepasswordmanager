@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -57,19 +58,48 @@ public class PasswordManagerController {
 
     private AuthenticationService theAuthenticationService;
 
+    @FXML
+    private TableColumn<WebsiteCredential, String> passwordColumn;
 
 
-    // Initializes all classes / data
+
+
     public void initialize() {
         theAuthenticationService = new AuthenticationService();
 
-//        loadTestUserAndWebsites();
-
-
-        createDeleteContextMenu();
+        createContextMenu();
         tableView.setPlaceholder(new Label("Your Secure Password Vault is Currently Empty."));
 
+        // Configure the password column's cell factory
+        passwordColumn.setCellFactory(column -> new TableCell<WebsiteCredential, String>() {
+            @Override
+
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    int index = getIndex();
+                    if (index >= 0 && index < getTableView().getItems().size()) {
+                        WebsiteCredential credential = getTableView().getItems().get(index);
+                        String displayedPassword = credential.getDisplayedPassword();
+                        System.out.println("Password for " + credential.getWebSiteName() + ": " + displayedPassword); // Debug line
+                        setText(displayedPassword);
+                    } else {
+                        setText(null);
+                    }
+                }
+            }
+        });
+
+        // No need to add the passwordColumn again, it's already defined in the FXML
+        // tableView.getColumns().add(passwordColumn); // REMOVE this line
     }
+
+        // Make sure to add this column to your tableView if not already added
+//        tableView.getColumns().add(passwordColumn);
+
+
 
     // Used by the LoginController class to pass in the loaded user
     public void setUser(User user) {
@@ -86,30 +116,54 @@ public class PasswordManagerController {
 
     }
 
-    // Sets up a context menu on the TableView which will allow the user to
-    // delete a credential via a right click option.
-    private void createDeleteContextMenu() {
+//    // Sets up a context menu on the TableView which will allow the user to
+//    // delete a credential via a right click option.
+//    private void createDeleteContextMenu() {
+//
+//        listContextMenu = new ContextMenu();
+//        // Create a delete option for the menu
+//        MenuItem deleteMenuItem = new MenuItem("Delete");
+//
+//        // Set the action to perform when the delete option is selected
+//        deleteMenuItem.setOnAction(actionEvent -> {
+//            // Get the selected item from the TableView
+//            WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
+//            // Call method to show confirmation dialog before deleting
+//            rightClickDeleteWebsiteCredentialAlert(websiteToDelete);
+//        });
+//
+//        // Add the delete option to the context menu
+//        listContextMenu.getItems().add(deleteMenuItem);
+//
+//        // Apply the context menu to each row in the TableView
+//        tableView.setRowFactory(tv -> {
+//            // Create a new TableRow for WebsiteCredential
+//            TableRow<WebsiteCredential> row = new TableRow<>();
+//            // Bind the context menu to the row, only show it when the row is not empty
+//            row.contextMenuProperty().bind(
+//                    Bindings.when(row.emptyProperty())
+//                            .then((ContextMenu) null)
+//                            .otherwise(listContextMenu)
+//            );
+//            return row;
+//        });
+//    }
 
+    private void createContextMenu() {
         listContextMenu = new ContextMenu();
-        // Create a delete option for the menu
+
+        MenuItem togglePasswordVisibilityMenuItem = new MenuItem("Show/Hide Password");
+        togglePasswordVisibilityMenuItem.setOnAction(actionEvent -> handleTogglePasswordVisibility());
+
+
         MenuItem deleteMenuItem = new MenuItem("Delete");
+        deleteMenuItem.setOnAction(actionEvent -> handleDeleteAction());
 
-        // Set the action to perform when the delete option is selected
-        deleteMenuItem.setOnAction(actionEvent -> {
-            // Get the selected item from the TableView
-            WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
-            // Call method to show confirmation dialog before deleting
-            rightClickDeleteWebsiteCredentialAlert(websiteToDelete);
-        });
 
-        // Add the delete option to the context menu
-        listContextMenu.getItems().add(deleteMenuItem);
+        listContextMenu.getItems().addAll(togglePasswordVisibilityMenuItem, deleteMenuItem);
 
-        // Apply the context menu to each row in the TableView
         tableView.setRowFactory(tv -> {
-            // Create a new TableRow for WebsiteCredential
             TableRow<WebsiteCredential> row = new TableRow<>();
-            // Bind the context menu to the row, only show it when the row is not empty
             row.contextMenuProperty().bind(
                     Bindings.when(row.emptyProperty())
                             .then((ContextMenu) null)
@@ -120,47 +174,43 @@ public class PasswordManagerController {
     }
 
 
-    // Creates and displays a confirmation alert before deleting a website credential.
-    public void rightClickDeleteWebsiteCredentialAlert(WebsiteCredential websiteToDelete) {
+    private void handleDeleteAction() {
+        WebsiteCredential websiteToDelete = tableView.getSelectionModel().getSelectedItem();
+        if (websiteToDelete != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Website Credential");
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Website Credential");
+            // Set the header text with the details of the credential to be deleted
+            alert.setHeaderText("Are you sure you want to delete the selected credentials: \n\n" +
+                    "Website: " + websiteToDelete.getWebSiteName() + "\n" +
+                    "User Name: " + websiteToDelete.getWebSiteUserName());
+            alert.setContentText("Are you sure?\n");
 
-        // Set the header text with the details of the credential to be deleted
-        alert.setHeaderText("Are you sure you want to delete the selected credentials: \n\n" +
-                "Website: " + websiteToDelete.getWebSiteName() + "\n" +
-                "User Name: " + websiteToDelete.getWebSiteUserName());
-        alert.setContentText("Are you sure?\n");
+            // Show the alert and wait for the user's response
+            Optional<ButtonType> result = alert.showAndWait();
 
-        // Show the alert and wait for the user's response
-        Optional<ButtonType> result = alert.showAndWait();
+            // If the OK button is clicked, remove the credential from the user's list
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                theLoadedUser.removeCredential(websiteToDelete);
+                // Assuming AuthenticationService is a service you've implemented for managing users
+                theAuthenticationService.saveUser(theLoadedUser);
+                theLoadedUser = theAuthenticationService.login(theLoadedUser.getUserName(), theLoadedUser.getPassword());
 
-        // If the OK button is clicked, remove the credential from the user's list
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            theLoadedUser.removeCredential(websiteToDelete);
-            // TODO change this to theAuthenticationService.save() once AuthenticationService is available.
-//            theUserDataService.writeUserToFile(theLoadedUser);
-
-
-
-            // TODO put this next few lines of code in its own method
-            // as this ensures that after the chagnes are mae the encrypted password
-            // doesnt show up in the tableview this same few lines of coe are in the
-            // onaddewbsitecredential code too
-            String userName = theLoadedUser.getUserName();
-            String password = theLoadedUser.getPassword();
-
-            theAuthenticationService.saveUser(theLoadedUser);
-
-
-            theLoadedUser = theAuthenticationService.login(userName, password);
-
-            // Update the TableView to display the list of credentials including the new one
-            tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-            tableView.refresh();
-
+                // Update the TableView to display the list of credentials excluding the deleted one
+                tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+                tableView.refresh();
+            }
         }
     }
+
+    private void handleTogglePasswordVisibility() {
+        WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
+        if (selectedCredential != null) {
+            selectedCredential.setPasswordVisible(!selectedCredential.isPasswordVisible());
+            tableView.refresh(); // This will trigger an update to the TableView
+        }
+    }
+
 
     @FXML
     public void onLogOutButtonClicked(ActionEvent event) {
@@ -352,119 +402,6 @@ public class PasswordManagerController {
         }
     }
 
-
-//    public void pauseAndLoadMasterPasswordController(String fxmlPath, double pauseSeconds, User theLoadedUser) {
-//        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-//        pause.setOnFinished(e -> {
-//            try {
-//                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-//                Parent root = loader.load();
-//
-//                MasterPasswordController masterPasswordController = loader.getController();
-//                masterPasswordController.setUser(theLoadedUser);
-//
-//                // Creating a new Stage for the Master Password window
-//                Stage masterPasswordStage = new Stage();
-//                masterPasswordStage.setTitle("Create Master Password");
-//                masterPasswordStage.setX(700);
-//                masterPasswordStage.setY(325);
-//
-//                masterPasswordStage.initModality(Modality.WINDOW_MODAL);
-//
-//                // Assuming you have a reference to the current window's stage:
-//                Stage primaryStage = (Stage) mainBorderPane.getScene().getWindow();
-//                masterPasswordStage.initOwner(primaryStage);
-//
-//                Scene scene = new Scene(root);
-//                masterPasswordStage.setScene(scene);
-//
-//                // Set onCloseRequest event handler
-//                masterPasswordStage.setOnCloseRequest(windowEvent -> {
-//                    // Load the login controller when the window is closed
-//                    loadController("/com/jgm/securepasswordmanager/login.fxml");
-//                });
-//
-//                masterPasswordStage.showAndWait();
-//
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//        pause.play();
-//    }
-
-
-
-
-//    public void pauseAndLoadMasterPasswordController(String fxmlPath, double pauseSeconds, User theLoadedUser) {
-//        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-//        pause.setOnFinished(e -> {
-//            try {
-//                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-//                Parent root = loader.load();
-//
-//                MasterPasswordController masterPasswordController = loader.getController();
-//                // Assuming setUser is a method in MasterPasswordController that you use to pass the User object
-//                masterPasswordController.setUser(theLoadedUser);
-//
-//                // Here you need access to your scene or any node/control within your scene.
-//                // For example, if you have a button or label with fx:id="myButton" you can use it like:
-//                // Stage stage = (Stage) myButton.getScene().getWindow();
-//
-//                // If you're in a method where you don't have direct access, you might need to store the stage or a node as a class variable when your controller initializes.
-//                Stage stage = (Stage) mainBorderPane.getScene().getWindow(); // mainBorderPane is just an example, use any node/control you have in your scene.
-//
-//                Scene scene = new Scene(root);
-//                stage.setTitle("Create Master Password");
-//                stage.setScene(scene);
-//
-//                // You no longer need to check if the user has created a master password here because this method's purpose is just to show the master password setup.
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//        pause.play();
-//    }
-
-
-//    @FXML
-//    public void onEditWebsiteCredentialClicked() {
-//        WebsiteCredential selectedWebsiteCredential = tableView.getSelectionModel().getSelectedItem();
-//        if(selectedWebsiteCredential == null) {
-//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//            alert.setTitle("No Website Selected");
-//            alert.setHeaderText(null);
-//            alert.setContentText("Please select the website you want to edit.");
-//            alert.showAndWait();
-//            return;
-//        }
-//
-//        Dialog<ButtonType> dialog = new Dialog<>();
-//        dialog.initOwner(mainBorderPane.getScene().getWindow());
-//        dialog.setTitle("Edit Website Credential");
-//        FXMLLoader fxmlLoader = new FXMLLoader();
-//        fxmlLoader.setLocation(getClass().getResource("add_password.fxml"));
-//        try {
-//            dialog.getDialogPane().setContent(fxmlLoader.load());
-//        } catch (IOException e) {
-//            System.out.println("Couldn't load the dialog");
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-//        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-//
-//        AddPasswordController theAddPasswordController = fxmlLoader.getController();
-//        theAddPasswordController.editWebsiteCredential(selectedWebsiteCredential);
-//
-//        Optional<ButtonType> result = dialog.showAndWait();
-//        if(result.isPresent() && result.get() == ButtonType.OK) {
-//            theAddPasswordController.updateWebsiteCredential(selectedWebsiteCredential);
-//            // TODO Call Edit website in userdata services here once created
-//            // or just overwrite the file which would be easier
-//        }
-//    }
 
     public void onDeleteWebsiteCredential() {
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();

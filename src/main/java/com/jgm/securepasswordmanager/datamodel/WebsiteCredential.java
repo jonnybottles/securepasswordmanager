@@ -8,6 +8,9 @@ public class WebsiteCredential {
     private String webSitePassword;
     private String notes;
 
+    //Transient field to no serialzie/deserserialize password visibility state
+    private transient boolean passwordVisible = false;
+
 
     public WebsiteCredential(String webSiteName, String webSiteUserName, String webSitePassword, String notes) {
         this.webSiteName = webSiteName;
@@ -48,6 +51,24 @@ public class WebsiteCredential {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    // New methods to manage password visibility
+    public boolean isPasswordVisible() {
+        return passwordVisible;
+    }
+
+    public void setPasswordVisible(boolean passwordVisible) {
+        this.passwordVisible = passwordVisible;
+    }
+
+    // Method to get displayed password (either dots or actual password)
+    public String getDisplayedPassword() {
+        if (passwordVisible) {
+            return webSitePassword;
+        } else {
+            return "••••••••••"; // or generate a string of dots based on the password length
+        }
     }
 
     // Overrides the default equals method to allow for comparing of two WebsiteCredential objects
