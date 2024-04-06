@@ -3,6 +3,7 @@ package com.jgm.securepasswordmanager.controllers;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
+import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -117,10 +119,33 @@ public class PasswordManagerController {
 
 
     @FXML
-    public void onLogsClicked() {
-        loadController("/com/jgm/securepasswordmanager/logs.fxml");
+    public void onLogsClicked(ActionEvent event) {
+        loadLogsController(event, "/com/jgm/securepasswordmanager/logs.fxml", 0, theLoadedUser);
     }
 
+
+    private void loadLogsController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
+        pause.setOnFinished(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                Parent root = loader.load();
+
+                LogsController theLogsController = loader.getController();
+                theLogsController.setUser(theNewUser);
+
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setTitle("Secure Password Manager Logs");
+                stage.setScene(scene);
+
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        pause.play();
+    }
 
 
 

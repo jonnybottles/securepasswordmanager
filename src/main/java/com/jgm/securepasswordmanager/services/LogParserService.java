@@ -1,49 +1,49 @@
 package com.jgm.securepasswordmanager.services;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.jgm.securepasswordmanager.datamodel.LogEntry;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Reader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import com.jgm.securepasswordmanager.utils.DirectoryPath;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LogParserService {
+	private static final String LOG_FILE_PATH = DirectoryPath.LOGS_DIRECTORY + "/securepasswordmanager.log";
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm:ss a");
-	private static final Pattern logPattern = Pattern.compile("(\\w{3} \\d{2}, \\d{4} \\d{1,2}:\\d{2}:\\d{2} [AP]M).*");
+	static {
+		// Ensure the logs directory exists
+		new File(DirectoryPath.LOGS_DIRECTORY).mkdirs();
+	}
 
-	public List<LogEntry> parseLogFile(Reader readerSource) {
-		List<LogEntry> entries = new ArrayList<>();
-		try (BufferedReader reader = new BufferedReader(readerSource)) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				Matcher matcher = logPattern.matcher(line);
-				if (matcher.find()) {
-					// Extract date and time
-					String datetimeStr = matcher.group(1);
-					LocalDateTime timestamp = LocalDateTime.parse(datetimeStr, formatter);
-
-					// The next line contains the log level and message
-					String nextLine = reader.readLine();
-					if (nextLine != null) {
-						int colonIndex = nextLine.indexOf(':');
-						if (colonIndex != -1) {
-							String severity = nextLine.substring(0, colonIndex);
-							String message = nextLine.substring(colonIndex + 2); // skip ": "
-							LogEntry entry = new LogEntry(timestamp, severity, message);
-							entries.add(entry);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
+	public static void appendLog(LogEntry logEntry) {
+		List<LogEntry> logEntries = loadLogs();
+		logEntries.add(logEntry); // Now safe, logEntries cannot be null
+		try (Writer writer = new FileWriter(LOG_FILE_PATH)) {
+			gson.toJson(logEntries, writer);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
-		return entries;
+	public static List<LogEntry> loadLogs() {
+		// Ensures we return an empty list instead of null if anything goes wrong
+		List<LogEntry> logEntries = new ArrayList<>();
+		File logFile = new File(LOG_FILE_PATH);
+		if (logFile.exists()) {
+			try (Reader reader = new FileReader(logFile)) {
+				// This line potentially returned null; fixed by ensuring an empty list is returned on error
+				logEntries = gson.fromJson(reader, new TypeToken<List<LogEntry>>(){}.getType());
+				if (logEntries == null) {
+					logEntries = new ArrayList<>();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return logEntries;
 	}
 }

@@ -1,95 +1,54 @@
 package com.jgm.securepasswordmanager.datamodel;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class LogEntry {
-	private ObjectProperty<LocalDateTime> timestamp;
-	private ObjectProperty<LocalDate> date;
-	private ObjectProperty<LocalTime> time;
-	private StringProperty severity;
-	private StringProperty message;
+	private String date; // Now as String
+	private String time; // Now as String
+	private String severity;
+	private String message;
 
-	public LogEntry(LocalDateTime timestamp, String severity, String message) {
-		this.timestamp = new SimpleObjectProperty<>(timestamp);
-		this.date = new SimpleObjectProperty<>(timestamp.toLocalDate());
-		this.time = new SimpleObjectProperty<>(timestamp.toLocalTime());
-		this.severity = new SimpleStringProperty(severity);
-		this.message = new SimpleStringProperty(message);
+	// Constructor initializes the date and time to the current moment as strings
+	public LogEntry(String severity, String message) {
+		this.date = java.time.LocalDate.now().toString();
+		this.time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+		this.severity = severity;
+		this.message = message;
 	}
 
-	// Property getters
-	public ObjectProperty<LocalDateTime> timestampProperty() {
-		return timestamp;
-	}
-
-	public ObjectProperty<LocalDate> dateProperty() {
+	// Getters and Setters
+	public String getDate() {
 		return date;
 	}
 
-	public ObjectProperty<LocalTime> timeProperty() {
+	public String getTime() {
 		return time;
 	}
 
-	public StringProperty severityProperty() {
+	public String getSeverity() {
 		return severity;
 	}
 
-	public StringProperty messageProperty() {
-		return message;
-	}
-
-	// Direct value getters
-	public LocalDateTime getTimestamp() {
-		return timestamp.get();
-	}
-
-	public LocalDate getDate() {
-		return date.get();
-	}
-
-	public LocalTime getTime() {
-		return time.get();
-	}
-
-	public String getSeverity() {
-		return severity.get();
+	public void setSeverity(String severity) {
+		this.severity = severity;
 	}
 
 	public String getMessage() {
-		return message.get();
-	}
-
-	// Setters
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp.set(timestamp);
-		this.date.set(timestamp.toLocalDate());
-		this.time.set(timestamp.toLocalTime());
-	}
-
-	public void setSeverity(String severity) {
-		this.severity.set(severity);
+		return message;
 	}
 
 	public void setMessage(String message) {
-		this.message.set(message);
+		this.message = message;
 	}
 
-	// Optional: toString method for debugging
 	@Override
 	public String toString() {
 		return "LogEntry{" +
-				"date=" + date.get().format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) +
-				", time=" + time.get().format(DateTimeFormatter.ofPattern("HH:mm:ss")) +
-				", severity='" + severity.get() + '\'' +
-				", message='" + message.get() + '\'' +
+				"date='" + date + '\'' +
+				", time='" + time + '\'' +
+				", severity='" + severity + '\'' +
+				", message='" + message + '\'' +
 				'}';
 	}
 }
