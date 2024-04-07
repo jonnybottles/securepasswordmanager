@@ -437,6 +437,13 @@ public class PasswordManagerController {
 
             // TODO Call Delete website credential in data services here once created
             // TODO Or just overwrite the file which would be easier
+            String userName = theLoadedUser.getUserName();
+            String password = theLoadedUser.getPassword();
+
+            theAuthenticationService.saveUser(theLoadedUser);
+
+            theLoadedUser = theAuthenticationService.login(userName, password);
+
 
 
         }
