@@ -1,6 +1,5 @@
 package com.jgm.securepasswordmanager.controllers;
 
-import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
 import com.jgm.securepasswordmanager.services.PasswordGeneratorService;
 import javafx.beans.value.ChangeListener;

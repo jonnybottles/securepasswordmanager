@@ -15,7 +15,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,18 +28,6 @@ public class PasswordManagerController {
 
     @FXML
     private TableView<WebsiteCredential> tableView;
-
-    @FXML
-    private TableColumn<WebsiteCredential, String> firstNameCol;
-
-    @FXML
-    private TableColumn<WebsiteCredential, String> lastNameCol;
-
-    @FXML
-    private TableColumn<WebsiteCredential, String> phoneNumberCol;
-
-    @FXML
-    private TableColumn<WebsiteCredential, String> notesCol;
 
     @FXML
     private BorderPane mainBorderPane;
@@ -60,12 +47,6 @@ public class PasswordManagerController {
 
     @FXML
     private TableColumn<WebsiteCredential, String> passwordColumn;
-
-    @FXML
-    private VBox centerVBox;
-
-
-
 
     public void initialize() {
         theAuthenticationService = new AuthenticationService();
@@ -192,8 +173,9 @@ public class PasswordManagerController {
             LogParserService.appendLog(new LogEntry("INFO", "Website credential deleted successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + selectedCredential.getWebSiteName() + ", Website Username: " + selectedCredential.getWebSiteUserName()));
             theLoadedUser.removeCredential(selectedCredential);
 
-            // TODO Call Delete website credential in data services here once created
-            // TODO Or just overwrite the file which would be easier
+            theAuthenticationService.saveUser(theLoadedUser);
+
+
 
 
         }
@@ -244,7 +226,6 @@ public class PasswordManagerController {
         }
     }
 
-
     // Event handler for adding a new website credential.
     // This loads the AddPasswordController, which opens a dialog for the
     // user to input new credential details
@@ -282,12 +263,6 @@ public class PasswordManagerController {
 
             // Add the new credential to the current user's list
             theLoadedUser.addCredential(newItem);
-            // TODO change this to theAuthenticationService.save() once AuthenticationService is available.
-
-            // TODO put this next few lines of code in its own method
-            // as this ensures that after the chagnes are mae the encrypted password
-            // doesnt show up in the tableview this same few lines of coe are in the
-            // rightlcikeddletemethod code too
 
             String userName = theLoadedUser.getUserName();
             String password = theLoadedUser.getPassword();
@@ -337,8 +312,6 @@ public class PasswordManagerController {
 
             Optional<ButtonType> result = dialog.showAndWait();
             if(result.isPresent() && result.get() == ButtonType.OK) {
-                // if this doesnt work do this
-//                theLoadedUser.addCredential(controller.updateWebsiteCredential(selectedCredential));
 
                 WebsiteCredential newCredential = controller.processResults();
 
@@ -427,8 +400,6 @@ public class PasswordManagerController {
         if(result.isPresent() && result.get() == ButtonType.OK) {
             theLoadedUser.removeCredential(selectedCredential);
 
-            // TODO Call Delete website credential in data services here once created
-            // TODO Or just overwrite the file which would be easier
             String userName = theLoadedUser.getUserName();
             String password = theLoadedUser.getPassword();
 
@@ -484,13 +455,7 @@ public class PasswordManagerController {
         }
 
         theAuthenticationService.saveUser(theLoadedUser);
-//        theUserDataService.writeUserToFile(theLoadedUser);
 
-//        List<User> theLoadedUserList = theUserDataService.loadUsersFromFile();
-//        theLoadedUser = theLoadedUserList.get(0);
-//
-//        // TODO REMOVE THIS!!
-//        theLoadedUser = theAuthenticationService.login("jbutler86", "secretpassword");
 
     }
 

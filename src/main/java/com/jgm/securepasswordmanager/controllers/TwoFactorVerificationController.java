@@ -12,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -122,65 +121,6 @@ public class TwoFactorVerificationController {
 		});
 		pause.play();
 	}
-
-//
-//	private void pauseAndLoadPasswordManagerController(ActionEvent event, String fxmlPath, double pauseSeconds, User theLoadedUser) {
-//		PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-//		pause.setOnFinished(e -> {
-//			try {
-//				FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-//				Parent root = loader.load();
-//
-//				PasswordManagerController passwordManagerController = loader.getController();
-//				passwordManagerController.setUser(theLoadedUser);
-//
-//				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//				Scene scene = new Scene(root);
-//				stage.setTitle("Secure Password Vault");
-//				stage.setScene(scene);
-//
-//				// Adjust the window position as needed
-//				stage.setX(400); // Set this value as needed to position the window
-//				stage.show();
-//
-//				if (!theLoadedUser.getHasCreatedMasterPassword()) {
-//						passwordManagerController.pauseAndLoadMasterPasswordController("/com/jgm/securepasswordmanager/master_password.fxml", 0, theLoadedUser);
-//				}
-//
-//
-//			} catch (IOException ex) {
-//				ex.printStackTrace();
-//			}
-//		});
-//		pause.play();
-//	}
-
-
-
-	private void pauseAndLoadController(ActionEvent event, String fxmlPath, String title, double pauseSeconds) {
-		PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-		pause.setOnFinished(e -> loadController(event, fxmlPath, title));
-		pause.play();
-	}
-
-	// Displays error popup.
-	public void displayErrorAlert(String title, String header, String msg) {
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(msg);
-		alert.showAndWait();
-	}
-
-	// Displays informational popup.
-	public void displayInformationalAlert(String title, String header, String msg) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(msg);
-		alert.showAndWait();
-	}
-
 
 
 }

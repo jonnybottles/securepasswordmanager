@@ -19,11 +19,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.FileReader;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LogsController {
@@ -136,7 +132,6 @@ public class LogsController {
 			stage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
-			// Consider logging this exception or showing a user-friendly error message
 		}
 	}
 }

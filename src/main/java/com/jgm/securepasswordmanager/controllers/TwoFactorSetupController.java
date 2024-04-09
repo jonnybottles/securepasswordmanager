@@ -40,10 +40,7 @@ public class TwoFactorSetupController {
 
 
 	public void initialize() {
-		// This is where I would pull the users email address, the secret key and then
-		// generate the QR code
 		theAuthenticationService = new AuthenticationService();
-//		generateAndDisplayQRCode();
 
 	}
 
@@ -77,16 +74,11 @@ public class TwoFactorSetupController {
 	private void handleVerifyButtonClicked(ActionEvent event) {
 		String authenticationCode = authenticationCodeField.getText().trim();
 
-
-		// MOVED THIS UP HERE FOR LOGGIN
 		String userName = theNewUser.getUserName();
 		String password = theNewUser.getPassword();
 
 		if (theAuthenticationService.registerTwoFactorAuthentication(authenticationCode, theNewUser.getSecretKeyFor2FABarcode())) {
 			theNewUser.setHasRegisteredTwoFactorAuthentication(true);
-
-			// IT WAS DOWN HERE IN CASE ANYTHING BREAKS!
-
 
 			theAuthenticationService.saveUser(theNewUser);
 

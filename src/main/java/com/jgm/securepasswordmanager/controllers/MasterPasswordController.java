@@ -10,7 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class MasterPasswordController {
@@ -32,9 +31,6 @@ public class MasterPasswordController {
 		theAuthenticationService = new AuthenticationService();
 
 	}
-
-
-
 
 	// Method to call when OK button is clicked, to check if passwords match
 	@FXML
@@ -75,7 +71,6 @@ public class MasterPasswordController {
 			Parent root = loader.load();
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(root));
-//			stage.setX(800);
 			stage.show();
 		} catch (Exception e) {
 			e.printStackTrace();

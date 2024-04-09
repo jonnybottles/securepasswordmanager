@@ -74,11 +74,6 @@ public class CreateNewAccountController {
 
             boolean saveResult = theAuthenticationService.saveUser(theNewUser);
 
-
-
-
-//            boolean saveResult = theAuthenticationService.saveUser(theNewUser);
-
             if (saveResult) {
                 theNewUser = theAuthenticationService.login(userName, password);
                 bottomLabel.setText("Registration successful.\n Proceeding to two factor authentication setup...");
@@ -150,11 +145,6 @@ public class CreateNewAccountController {
         return true;
     }
 
-    private void pauseAndLoadController(ActionEvent event, String fxmlPath, String title, double pauseSeconds) {
-        PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
-        pause.setOnFinished(e -> loadController(event, fxmlPath, title));
-        pause.play();
-    }
 
     private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User newUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
@@ -178,8 +168,6 @@ public class CreateNewAccountController {
         });
         pause.play();
     }
-
-
 
 
     private void loadController(ActionEvent event, String fxmlPath, String title) {
