@@ -22,7 +22,7 @@ public class UserDataServiceTest {
     public void setUp() {
 
         // Ensure the test directory is clean before each test
-        FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+        FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
 
         UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_USERS_DIRECTORY);
         UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_LOGS_DIRECTORY);
