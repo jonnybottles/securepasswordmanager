@@ -9,15 +9,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class MasterPasswordController {
 	@FXML
-	private TextField masterPasswordField;
+	private PasswordField masterPasswordField;
 
 	@FXML
-	private TextField confirmMasterPasswordField;
+	private PasswordField confirmMasterPasswordField;
 
 	@FXML
 	private Label validatePasswordLabel;

@@ -2,21 +2,14 @@ package com.jgm.securepasswordmanager.services;
 
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.datamodel.WebsiteCredential;
-//import com.jgm.securepasswordmanager.utils.FileUtils;
 import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.nio.file.Path;
 import java.util.List;
-
 import com.jgm.securepasswordmanager.utils.FileUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,27 +23,20 @@ public class UserDataServiceTest {
         // Ensure the test directory is clean before each test
         FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
 
-        UserDataService.createAllProgramDirectories();
+        UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_USERS_DIRECTORY);
+        UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_LOGS_DIRECTORY);
+        LogParserService.setLogFilePath(DirectoryPath.TEST_LOGS_DIRECTORY + "/securepasswordmanager.log"); ;
+        UserDataService.setTheUserDataDirectoryPath(DirectoryPath.TEST_USERS_DIRECTORY);
+
     }
 
-//    @AfterEach
-//    public void tearDown() {
-//        // Clean up after each test by deleting the test directory and its contents
-//        recursiveDelete(userDataDirectory.toPath());
-//    }
+    @AfterEach
+    public void tearDown() {
+        // Clean up after each test by deleting the test directory and its contents
+        FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
+        FileUtils.recursiveDelete(DirectoryPath.TEST_LOGS_DIRECTORY);
+    }
 
-//    @Test
-//    public void testCreateUserDataDirectory() {
-//        // Verify the directory does not already exist
-//        assertFalse(userDataDirectory.exists());
-//
-//        // Attempt to create the directory and verify success
-//        boolean result = theUserDataService.createUserDataDirectory();
-//
-//        // The directory should now exist
-//        assertTrue(result);
-//        assertTrue(userDataDirectory.exists());
-//    }
 
     @Test
     public void testWriteUserToFile() {
@@ -63,7 +49,7 @@ public class UserDataServiceTest {
         assertTrue(UserDataService.writeUserToFile(theUser));
 
         // Verify that the file now exists
-        File userFile = new File(DirectoryPath.USERS_DIRECTORY, theUser.getUserName() + ".json");
+        File userFile = new File(DirectoryPath.TEST_USERS_DIRECTORY, theUser.getUserName() + ".json");
         assertTrue(userFile.exists());
     }
 
@@ -88,13 +74,9 @@ public class UserDataServiceTest {
         User theUser = prepareUserData(); // Prepare user data for testing
 
         String clearTextUserPassword = theUser.getPassword(); // Get the clear text password
-        System.out.println("The clear text password is" +  clearTextUserPassword);
 
         List<String> clearTextWebSitePasswords = populatePasswordsList(theUser); // Get clear text website passwords
 
-        // Print user information before writing to file
-        System.out.println("User information before writing to file:");
-        System.out.println(theUser);
 
         assertTrue(UserDataService.writeUserToFile(theUser)); // Write the user to file
 
@@ -106,8 +88,6 @@ public class UserDataServiceTest {
 //        assertEquals(theUser, loadedUser);
 
         // Print user information after loading from file
-        System.out.println("\nUser information after loading from file:");
-        System.out.println(loadedUser);
 
         // Check if the user's clear text password matches after decryption
         String loadedUserClearTextPassword = loadedUser.getPassword();
@@ -145,17 +125,4 @@ public class UserDataServiceTest {
 
     }
 
-    public static void recursiveDelete(Path path) {
-        if (Files.exists(path)) {
-            try {
-                // Walk the file tree and delete each path
-                Files.walk(path)
-                        .sorted(Comparator.reverseOrder())
-                        .map(Path::toFile)
-                        .forEach(File::delete);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

@@ -42,6 +42,14 @@ public class LogEntry {
 		this.message = message;
 	}
 
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
 	@Override
 	public String toString() {
 		return "LogEntry{" +

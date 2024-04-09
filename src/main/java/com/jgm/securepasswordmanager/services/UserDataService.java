@@ -17,8 +17,14 @@ public class UserDataService {
 
     private static final Gson theGson = new GsonBuilder().setPrettyPrinting().create();;
 
+    private static String theUserDataDirectoryPath = DirectoryPath.USERS_DIRECTORY;
+
+    public static void setTheUserDataDirectoryPath(String theUserDataDirectoryPath) {
+        UserDataService.theUserDataDirectoryPath = theUserDataDirectoryPath;
+    }
+
     /** Creates a directory if it does not exist already. */
-    private static boolean createDirectoryIfNotExists(String directoryName) {
+    public static boolean createDirectoryIfNotExists(String directoryName) {
         File directory = new File(System.getProperty("user.dir"), directoryName);
         if (!directory.exists()) {
             return directory.mkdirs();
@@ -50,7 +56,7 @@ public class UserDataService {
 
     public static boolean writeUserToFile(User user) {
 
-        String userDataFilename = DirectoryPath.USERS_DIRECTORY + File.separator + user.getUserName() + ".json";
+        String userDataFilename = theUserDataDirectoryPath + File.separator + user.getUserName() + ".json";
 
         // Convert ObservableList to List for Gson serialization
         List<WebsiteCredential> credentialList = new ArrayList<>(user.getWebsiteCredentialObservablelList());
@@ -76,7 +82,7 @@ public class UserDataService {
 
     public static List<User> loadUsersFromFile() {
         List<User> users = new ArrayList<>();
-        File directory = new File(DirectoryPath.USERS_DIRECTORY);
+        File directory = new File(theUserDataDirectoryPath);
 
         if (directory.exists() && directory.isDirectory()) {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
