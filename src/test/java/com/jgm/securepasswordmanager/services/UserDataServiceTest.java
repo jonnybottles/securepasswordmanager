@@ -13,18 +13,21 @@ import java.util.List;
 import com.jgm.securepasswordmanager.utils.FileUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
+// UserDataServiceTest is designed to perform unit testing on the UserDataService class,
+// specifically focusing on operations such as writing to, reading from files, and encryption/decryption processes.
 public class UserDataServiceTest {
 
 
     @BeforeEach
     public void setUp() {
-        // Initialize UserDataService for each test
 
         // Ensure the test directory is clean before each test
         FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
 
         UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_USERS_DIRECTORY);
         UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_LOGS_DIRECTORY);
+
+        // Configures a test log file path within the test logs directory.
         LogParserService.setLogFilePath(DirectoryPath.TEST_LOGS_DIRECTORY + "/securepasswordmanager.log"); ;
         UserDataService.setTheUserDataDirectoryPath(DirectoryPath.TEST_USERS_DIRECTORY);
 
@@ -40,7 +43,6 @@ public class UserDataServiceTest {
 
     @Test
     public void testWriteUserToFile() {
-
 
         // Prepare user data for writing to file
         User theUser = prepareUserData();
@@ -85,7 +87,6 @@ public class UserDataServiceTest {
         // Assert that loaded user matches the original user
         assertEquals(1, theLoadedUsers.size());
         User loadedUser = theLoadedUsers.get(0);
-//        assertEquals(theUser, loadedUser);
 
         // Print user information after loading from file
 

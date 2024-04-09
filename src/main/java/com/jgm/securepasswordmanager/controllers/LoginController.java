@@ -29,14 +29,9 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
-    private Button loginButton;
-
-    @FXML
     private Label loginStatusLabel;
 
     private AuthenticationService theAuthenticationService;
-
-
 
     public void initialize() {
         theAuthenticationService = new AuthenticationService();
@@ -66,9 +61,6 @@ public class LoginController {
                 LogParserService.appendLog(new LogEntry("INFO", "Login success. User: " + username));
 
             }
-
-//            loginStatusLabel.setText("    Login successful.\n     Loading your secure password vault...");
-//            loginStatusLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center; -fx-text-alignment: center;");
 
         } else {
             loginStatusLabel.setText("    Login failure.\n     Invalid username or password.");

@@ -41,8 +41,6 @@ public class User {
         this.websiteCredentialNormalList = new ArrayList<>();
     }
 
-
-
     public String getFirstName() {
         return firstName;
     }
