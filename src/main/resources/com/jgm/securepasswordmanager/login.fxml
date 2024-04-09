@@ -54,7 +54,7 @@
                <children>
                    <ImageView fitHeight="92.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                        <image>
-                           <Image url="/l3.png" /> <!-- Replace with the actual path to your image -->
+                           <Image url="/l3.png" />
                        </image>
                      <HBox.margin>
                         <Insets />
@@ -64,9 +64,6 @@
                <padding>
                   <Insets bottom="20.0" left="20.0" top="10.0" />
                </padding></HBox>
-
-
-
 
             </children>
             <padding>
@@ -105,7 +102,6 @@
                <opaqueInsets>
                   <Insets />
                </opaqueInsets></HBox>
-
          </children>
       </GridPane>
    </bottom>

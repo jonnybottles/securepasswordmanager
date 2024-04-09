@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 
+// Single method file utilities class.
+// Will combine UserDataServices at later point
 public class FileUtils {
 
 

@@ -70,7 +70,6 @@ public class LogsController {
 	}
 
 	private void loadLogs() {
-		// Assume LogService.loadLogs() now directly returns a List<LogEntry> from JSON
 		List<LogEntry> logEntries = LogParserService.loadLogs();
 		tableView.setItems(FXCollections.observableArrayList(logEntries));
 	}
@@ -82,7 +81,6 @@ public class LogsController {
 		}
 		this.theLoadedUser = user;
 
-		// If you need to initialize components with user data, call a method to do it here
 		userNameLabel.setText(theLoadedUser.getUserName());
 		emailLabel.setText(theLoadedUser.getEmailAddress());
 	}

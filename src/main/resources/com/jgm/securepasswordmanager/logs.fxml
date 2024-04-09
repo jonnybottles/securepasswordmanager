@@ -17,7 +17,7 @@
       <HBox alignment="CENTER" maxWidth="Infinity">
         <ImageView fitHeight="112.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true">
           <image>
-            <Image url="/l3.png" /> <!-- Replace with the actual path to your image -->
+            <Image url="/l3.png" />
           </image>
         </ImageView>
       </HBox>

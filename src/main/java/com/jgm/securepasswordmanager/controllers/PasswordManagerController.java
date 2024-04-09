@@ -94,12 +94,7 @@ public class PasswordManagerController {
             }
         });
 
-        // No need to add the passwordColumn again, it's already defined in the FXML
-        // tableView.getColumns().add(passwordColumn); // REMOVE this line
     }
-
-        // Make sure to add this column to your tableView if not already added
-//        tableView.getColumns().add(passwordColumn);
 
 
 
@@ -112,7 +107,6 @@ public class PasswordManagerController {
 
         //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
         tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-        // If you need to initialize components with user data, call a method to do it here
         userNameLabel.setText(theLoadedUser.getUserName());
         emailLabel.setText(theLoadedUser.getEmailAddress());
 
@@ -387,7 +381,6 @@ public class PasswordManagerController {
             Stage masterPasswordStage = new Stage();
             masterPasswordStage.setTitle("Create Master Password");
 
-            // Assuming you have a reference to the current window's stage:
             Stage primaryStage = (Stage) mainBorderPane.getScene().getWindow();
             masterPasswordStage.initModality(Modality.APPLICATION_MODAL);
             masterPasswordStage.initOwner(primaryStage);
@@ -406,7 +399,6 @@ public class PasswordManagerController {
             // After window closes, access the updated user from the controller
             this.theLoadedUser = masterPasswordController.getUser();
 
-            // Here, you can now use theUpdatedUser as needed
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.jgm.securepasswordmanager.utils;
 
+// This class provides paths to all program directories.
 public class DirectoryPath {
 	public static final String USERS_DIRECTORY = "data/user_data";
 	public static final String USERS_MASTER_KEY = "data/user_master_keys";

@@ -10,7 +10,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,7 +109,7 @@ public class AddPasswordController {
 
     // Adjusts the minimum range of the length combo box based on the sum of the other combo boxes
     private void adjustLengthComboBoxMinimum() {
-        // Ensure we have valid values before we sum them up.
+
         int upperCaseCount = upperCaseComboBox.getValue() == null ? 0 : upperCaseComboBox.getValue();
         int lowerCaseCount = lowerCaseComboBox.getValue() == null ? 0 : lowerCaseComboBox.getValue();
         int numbersCount = numbersComboBox.getValue() == null ? 0 : numbersComboBox.getValue();

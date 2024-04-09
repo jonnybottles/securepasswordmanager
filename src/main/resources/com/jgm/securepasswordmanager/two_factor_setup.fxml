@@ -23,9 +23,7 @@
                <VBox.margin>
                   <Insets top="25.0" />
                </VBox.margin>
-<!--                <image>-->
-<!--                    <Image url="/qrcode.png" /> &lt;!&ndash; Replace with the actual path to your image &ndash;&gt;-->
-<!--                </image>-->
+
             </ImageView>
             <Label fx:id="qrCodeVertificationLabel" prefHeight="63.0" prefWidth="269.0" text="Once scanned, enter the code from the app below:">
                <padding>
