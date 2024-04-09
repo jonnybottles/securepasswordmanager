@@ -1,5 +1,7 @@
+//Package that groups related classes and interfaces
 package com.jgm.securepasswordmanager.controllers;
 
+// Imports necessary classes and packages
 import com.jgm.securepasswordmanager.datamodel.LogEntry;
 import com.jgm.securepasswordmanager.datamodel.User;
 import com.jgm.securepasswordmanager.services.AuthenticationService;
@@ -17,11 +19,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.IOException;
 
+//Defines the controller for creating a new account.
 public class CreateNewAccountController {
 
+    /* Defined all allocated component parts of the JavaFX layout with their fx:id */
     @FXML
     private TextField firstNameField;
 
@@ -43,14 +46,17 @@ public class CreateNewAccountController {
     @FXML
     private Label bottomLabel;
 
-
+    // Service for verifying login credentials and saving new user information
     private AuthenticationService theAuthenticationService;
 
+    // The new user being created
     private User theNewUser;
 
+    // For storing messages to be shown to the user
     private StringBuilder theInformationalAlertMessage;
 
-
+    /* This method is called after all @FXML annotated members have been injected. 
+    Initializes controller state.*/
     @FXML
     private void initialize() {
         theAuthenticationService = new AuthenticationService();
@@ -58,17 +64,18 @@ public class CreateNewAccountController {
         theInformationalAlertMessage = new StringBuilder();
     }
 
-
+    /* This function is called when 'Cancel' button is clicked. 
+    It loads the login page controller */
     @FXML
     private void handleCancelButtonClicked(ActionEvent event) {
         loadController(event, "/com/jgm/securepasswordmanager/login.fxml", "Login");
     }
 
-
+    /* Handles clicking on the Register button */
     @FXML
     private void handleRegisterButtonClicked(ActionEvent event) {
+        /* Validating user details, saving user if valid, and providing status feedback to the user*/
         if (isAllInputValid()) {
-
             String userName = theNewUser.getUserName();
             String password = theNewUser.getPassword();
 
@@ -83,8 +90,8 @@ public class CreateNewAccountController {
                 LogParserService.appendLog(new LogEntry("INFO", "Account creation success. User: " + userName));
 
             } else {
-                  System.out.println("Failed to register the user.");
-                  displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
+                System.out.println("Failed to register the user.");
+                displayErrorAlert("Registration Error","Registration Error", "System failed to register the user. Please try again.");
                 LogParserService.appendLog(new LogEntry("SEVERE", "Account creation failure. User: " + userName));
 
             }
@@ -94,48 +101,51 @@ public class CreateNewAccountController {
         }
     }
 
-
+    /* Method to check if all data entered by the user is valid */
     private boolean isAllInputValid() {
-        // Clear previous error messages
         theInformationalAlertMessage.setLength(0);
 
-        // Check each input individually
+        // Check each input field individually
         boolean firstNameValid = isValidFirstName(firstNameField.getText().trim());
         boolean lastNameValid = isValidLastName(lastNameField.getText().trim());
         boolean emailAddressValid = isValidEmailAddress(emailAddressField.getText().trim());
         boolean userNameValid = isValidUserName(usernameField.getText().trim());
+        // Check if the password and the confirmation password match
         boolean passwordsValid = isValidPasswordAndConfirmationPassword(passwordField.getText().trim(), confirmPasswordField.getText().trim());
 
-        // Combine all validation checks
+        // Combine all validity checks
         return firstNameValid && lastNameValid && emailAddressValid && userNameValid && passwordsValid;
-
     }
 
-
+    /* Check if the entered firstName is valid.*/
     private boolean isValidFirstName(String firstName) {
         boolean isValid = theNewUser.setFirstName(firstName);
         if (!isValid) theInformationalAlertMessage.append("Invalid first name.\n");
         return isValid;
     }
 
+    /* Check if the entered lastName is valid.*/
     private boolean isValidLastName(String lastName) {
         boolean isValid = theNewUser.setLastName(lastName);
         if (!isValid) theInformationalAlertMessage.append("Invalid last name.\n");
         return isValid;
     }
 
+    /* Check the validity of the entered email address */
     private boolean isValidEmailAddress(String emailAddress) {
         boolean isValid = theNewUser.setEmailAddress(emailAddress);
         if (!isValid) theInformationalAlertMessage.append("Invalid email address format.\n");
         return isValid;
     }
 
+    /* Check the validity of the entered username */
     private boolean isValidUserName(String userName) {
         boolean isValid = theNewUser.setUserName(userName);
         if (!isValid) theInformationalAlertMessage.append("Invalid username.\n");
         return isValid;
     }
 
+    /* Check if entered password match with confirmation password and both are valid */
     private boolean isValidPasswordAndConfirmationPassword(String password, String confirmationPassword) {
         boolean isValid = theNewUser.setPassword(password);
         if (!isValid || !password.equals(confirmationPassword)) {
@@ -145,7 +155,7 @@ public class CreateNewAccountController {
         return true;
     }
 
-
+    /* This function is used to pause and load the controller for two factor setup */
     private void pauseAndLoadTwoFactorSetupController(ActionEvent event, String fxmlPath, double pauseSeconds, User newUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
@@ -169,7 +179,7 @@ public class CreateNewAccountController {
         pause.play();
     }
 
-
+    /* This function is used to load the controller for a given fxml and sets the title of the stage */
     private void loadController(ActionEvent event, String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -183,7 +193,7 @@ public class CreateNewAccountController {
         }
     }
 
-    // Displays error popup.
+    // Function to display an error alert
     public void displayErrorAlert(String title, String header, String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -192,7 +202,7 @@ public class CreateNewAccountController {
         alert.showAndWait();
     }
 
-    // Displays informational popup.
+    // Function to display an informational alert
     public void displayInformationalAlert(String title, String header, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

@@ -26,38 +26,32 @@ import java.util.Optional;
 
 public class PasswordManagerController {
 
+    // JavaFX components connected to the FXML layout
     @FXML
     private TableView<WebsiteCredential> tableView;
-
     @FXML
     private BorderPane mainBorderPane;
-
     @FXML
     private ContextMenu listContextMenu;
-
     @FXML
     private Label userNameLabel;
-
     @FXML
     private Label emailLabel;
-
-    private User theLoadedUser;
-
-    private AuthenticationService theAuthenticationService;
-
     @FXML
     private TableColumn<WebsiteCredential, String> passwordColumn;
 
+    private User theLoadedUser; // Stores the user's information
+    private AuthenticationService theAuthenticationService; // Service for handling authentication
+
+    // Method called to initialize the controller
     public void initialize() {
-        theAuthenticationService = new AuthenticationService();
+        theAuthenticationService = new AuthenticationService(); // Initializes the authentication service
+        createContextMenu(); // Creates a context menu for the table view
+        tableView.setPlaceholder(new Label("Your Secure Password Vault is Currently Empty.")); // Sets a placeholder for the empty table
 
-        createContextMenu();
-        tableView.setPlaceholder(new Label("Your Secure Password Vault is Currently Empty."));
-
-        // Configure the password column's cell factory
+        // Configures the password column to display masked or plain text passwords
         passwordColumn.setCellFactory(column -> new TableCell<WebsiteCredential, String>() {
             @Override
-
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
@@ -74,32 +68,27 @@ public class PasswordManagerController {
                 }
             }
         });
-
     }
 
-
-
-    // Used by the LoginController class to pass in the loaded user
+    // Method to set the loaded user in the controller
     public void setUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("Cannot set a null User.");
         }
         this.theLoadedUser = user;
-
-        //Bind the TableView to the list of websitecredentials allowing for the tableview display of all website creds
+        // Binds the table view with the user's website credentials
         tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-        userNameLabel.setText(theLoadedUser.getUserName());
-        emailLabel.setText(theLoadedUser.getEmailAddress());
-
+        userNameLabel.setText(theLoadedUser.getUserName()); // Sets the user's name on the UI
+        emailLabel.setText(theLoadedUser.getEmailAddress()); // Sets the user's email on the UI
     }
 
-
+    // Event handler for when the "Logs" option is clicked
     @FXML
     public void onLogsClicked(ActionEvent event) {
         loadLogsController(event, "/com/jgm/securepasswordmanager/logs.fxml", 0, theLoadedUser);
     }
 
-
+    // Loads the logs controller after a specified pause
     private void loadLogsController(ActionEvent event, String fxmlPath, double pauseSeconds, User theNewUser) {
         PauseTransition pause = new PauseTransition(Duration.seconds(pauseSeconds));
         pause.setOnFinished(e -> {
@@ -108,13 +97,12 @@ public class PasswordManagerController {
                 Parent root = loader.load();
 
                 LogsController theLogsController = loader.getController();
-                theLogsController.setUser(theNewUser);
+                theLogsController.setUser(theNewUser); // Passes the loaded user to the logs controller
 
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Secure Password Manager Logs");
                 stage.setScene(scene);
-
                 stage.show();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -123,21 +111,18 @@ public class PasswordManagerController {
         pause.play();
     }
 
-
-
+    // Creates a context menu for the table view with options for password visibility and deletion
     private void createContextMenu() {
         listContextMenu = new ContextMenu();
-
         MenuItem togglePasswordVisibilityMenuItem = new MenuItem("Show/Hide Password");
         togglePasswordVisibilityMenuItem.setOnAction(actionEvent -> handleTogglePasswordVisibility());
-
 
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(actionEvent -> handleDeleteAction());
 
-
         listContextMenu.getItems().addAll(togglePasswordVisibilityMenuItem, deleteMenuItem);
 
+        // Binds the context menu to the table row, showing it only when the row is not empty
         tableView.setRowFactory(tv -> {
             TableRow<WebsiteCredential> row = new TableRow<>();
             row.contextMenuProperty().bind(
@@ -149,18 +134,20 @@ public class PasswordManagerController {
         });
     }
 
-
+    // Handles the deletion of a selected credential
     private void handleDeleteAction() {
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
-        if(selectedCredential == null) {
+        if (selectedCredential == null) {
+            // Shows an alert if no credential is selected
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("No Website Credential Selected");
             alert.setHeaderText(null);
-            alert.setContentText("PLease select the website credential you want to delete.");
+            alert.setContentText("Please select the website credential you want to delete.");
             alert.showAndWait();
             return;
         }
 
+        // Confirmation dialog for credential deletion
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Credential");
         alert.setHeaderText(null);
@@ -169,57 +156,63 @@ public class PasswordManagerController {
                 "User Name: " + selectedCredential.getWebSiteUserName());
 
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Logs the deletion of the credential
             LogParserService.appendLog(new LogEntry("INFO", "Website credential deleted successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + selectedCredential.getWebSiteName() + ", Website Username: " + selectedCredential.getWebSiteUserName()));
-            theLoadedUser.removeCredential(selectedCredential);
+            theLoadedUser.removeCredential(selectedCredential); // Removes the credential from the user's list
 
+            String userName = theLoadedUser.getUserName();
+            String password = theLoadedUser.getPassword();
+
+            /* Save the changes and reload the updated credentials */
             theAuthenticationService.saveUser(theLoadedUser);
+            theLoadedUser = theAuthenticationService.login(userName, password);
 
-
-
-
+            // Update the TableView to display the list of credentials including the new one
+            tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+            tableView.refresh();
         }
     }
 
+    // Toggles the visibility of the selected credential's password
     private void handleTogglePasswordVisibility() {
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
         if (selectedCredential != null) {
-            selectedCredential.setPasswordVisible(!selectedCredential.isPasswordVisible());
-            tableView.refresh(); // This will trigger an update to the TableView
+            selectedCredential.setPasswordVisible(!selectedCredential.isPasswordVisible()); // Toggles the password visibility
+            tableView.refresh(); // Refreshes the table view to update the password display
         }
     }
 
-
+    // Event handler for the logout button, loads the login controller
     @FXML
     public void onLogOutButtonClicked(ActionEvent event) {
-        loadController(event, "/com/jgm/securepasswordmanager/login.fxml");
+        loadController(event, "/com/jgm/securepasswordmanager/login.fxml"); // Loads the login view
         LogParserService.appendLog(new LogEntry("INFO", "Log out success. User: " + theLoadedUser.getUserName()));
-
     }
 
+    // Loads a controller based on the specified FXML path
     private void loadController(ActionEvent event, String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setX(800);
+            stage.setX(800); // Optionally sets the window position
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // Overloaded method to load a controller without needing an event, directly using the main stage
     private void loadController(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            // Directly use the main stage from the current scene without needing an event
-            Stage stage = (Stage) mainBorderPane.getScene().getWindow();
-
+            Stage stage = (Stage) mainBorderPane.getScene().getWindow(); // Uses the main stage
             stage.setScene(new Scene(root));
-            stage.setX(800); // Set position if necessary
+            stage.setX(800); // Sets the window position
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -285,10 +278,14 @@ public class PasswordManagerController {
         }
     }
 
+    /* Method to handle the event when 'Edit Website Credential' is clicked */
     @FXML
     public void onEditWebsiteCredentialClicked() {
+        // Get the selected credential from the table.
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
+        // Check if a credential is selected
         if(selectedCredential != null) {
+            /* Create dialog for editing the credential */
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.initOwner(mainBorderPane.getScene().getWindow());
             dialog.setTitle("Edit Website Credential");
@@ -298,6 +295,7 @@ public class PasswordManagerController {
             fxmlLoader.setLocation(getClass().getResource("/com/jgm/securepasswordmanager/add_password.fxml"));
 
             try {
+                /* Set the content for the DialogPane by loading from a fxml file */
                 dialog.getDialogPane().setContent(fxmlLoader.load());
             } catch (IOException e) {
                 System.out.println("Couldn't load the dialog");
@@ -305,16 +303,21 @@ public class PasswordManagerController {
                 return;
             }
 
+            /* Get the AddPasswordController and populate the fields with the selected credentials */
             AddPasswordController controller = fxmlLoader.getController();
             controller.prepopulateFields(selectedCredential);
 
+            /* Add OK and Cancel buttons to the dialog */
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+            /* Show the dialog and handle user response */
             Optional<ButtonType> result = dialog.showAndWait();
             if(result.isPresent() && result.get() == ButtonType.OK) {
 
+                /* If OK is pressed, process the results and save the updated credentials */
                 WebsiteCredential newCredential = controller.processResults();
 
+                /* Update the original credentials */
                 selectedCredential.setWebSiteName(newCredential.getWebSiteName());
                 selectedCredential.setWebSitePassword(newCredential.getWebSitePassword());
                 selectedCredential.setWebSiteUserName(newCredential.getWebSiteUserName());
@@ -323,16 +326,20 @@ public class PasswordManagerController {
                 String userName = theLoadedUser.getUserName();
                 String password = theLoadedUser.getPassword();
 
-                theAuthenticationService.saveUser(theLoadedUser); // Save updated credentials
+                /* Save the credentials and reload the updated credentials */
+                theAuthenticationService.saveUser(theLoadedUser);
                 theLoadedUser = theAuthenticationService.login(userName, password);
 
+                /* Refresh the table view with the updated credentials */
                 tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
-                tableView.refresh(); // Refresh the TableView to show the updated data
+                tableView.refresh();
 
+                /* Log the success message */
                 LogParserService.appendLog(new LogEntry("INFO", "Website credential edited successfully." + "User: " + theLoadedUser.getUserName() + " Website: " + newCredential.getWebSiteName() + ", Website Username: " + newCredential.getWebSiteUserName()));
 
             }
         } else {
+            /* Show an alert if no website credential is selected */
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("No Website Credential Selected");
             alert.setHeaderText(null);
@@ -341,16 +348,17 @@ public class PasswordManagerController {
         }
     }
 
-
+    /* Method to pause and load the master password controller */
     public void pauseAndLoadMasterPasswordController(String fxmlPath, User loadedUser) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
+            /* Get the MasterPasswordController and set the user */
             MasterPasswordController masterPasswordController = loader.getController();
             masterPasswordController.setUser(loadedUser);
 
-            // Creating a new Stage for the Master Password window
+            /* Create a new stage for the master password dialog window */
             Stage masterPasswordStage = new Stage();
             masterPasswordStage.setTitle("Create Master Password");
 
@@ -366,10 +374,10 @@ public class PasswordManagerController {
                 loadController("/com/jgm/securepasswordmanager/login.fxml");
             });
 
-            // Show the modal window and wait
+            /* Show the stage */
             masterPasswordStage.showAndWait();
 
-            // After window closes, access the updated user from the controller
+            /* After the window closes, get the updated user from the controller */
             this.theLoadedUser = masterPasswordController.getUser();
 
         } catch (IOException ex) {
@@ -377,10 +385,13 @@ public class PasswordManagerController {
         }
     }
 
-
+    /* Method to handle the event when deleting a website credential */
     public void onDeleteWebsiteCredential() {
+        /* Get the selected credential from the table */
         WebsiteCredential selectedCredential = tableView.getSelectionModel().getSelectedItem();
+        /* Check if a credential is selected */
         if(selectedCredential == null) {
+            /* Show an informational alert if no credential is selected */
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("No Website Credential Selected");
             alert.setHeaderText(null);
@@ -389,6 +400,7 @@ public class PasswordManagerController {
             return;
         }
 
+        /* Display a confirmation alert before deleting */
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Credential");
         alert.setHeaderText(null);
@@ -396,19 +408,22 @@ public class PasswordManagerController {
                 "Website: " + selectedCredential.getWebSiteName() + "\n" +
                 "User Name: " + selectedCredential.getWebSiteUserName());
 
+        /* Process the user's response */
         Optional<ButtonType> result = alert.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK) {
+            /* If OK is pressed, remove the credential from the user */
             theLoadedUser.removeCredential(selectedCredential);
 
             String userName = theLoadedUser.getUserName();
             String password = theLoadedUser.getPassword();
 
+            /* Save the changes and reload the updated credentials */
             theAuthenticationService.saveUser(theLoadedUser);
-
             theLoadedUser = theAuthenticationService.login(userName, password);
 
-
-
+            /* Refresh the table view with the updated credentials */
+            tableView.setItems(theLoadedUser.getWebsiteCredentialObservablelList());
+            tableView.refresh();
         }
     }
 
