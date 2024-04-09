@@ -1,6 +1,5 @@
 package com.jgm.securepasswordmanager.services;
 
-import com.jgm.securepasswordmanager.controllers.TwoFactorVerificationController;
 import com.jgm.securepasswordmanager.utils.DirectoryPath;
 import com.jgm.securepasswordmanager.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 class TwoFactorAuthenticationServiceTest {
 
@@ -20,15 +17,22 @@ class TwoFactorAuthenticationServiceTest {
 	public void setUp() {
 		// Initialize UserDataService for each test
 		// Ensure the test directory is clean before each test
-		FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+		FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
 
-		UserDataService.createAllProgramDirectories();
+		UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_USERS_DIRECTORY);
+		UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_LOGS_DIRECTORY);
+		LogParserService.setLogFilePath(DirectoryPath.TEST_LOGS_DIRECTORY + "/securepasswordmanager.log"); ;
+		UserDataService.setTheUserDataDirectoryPath(DirectoryPath.TEST_USERS_DIRECTORY);
+		UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_QR_CODE_DIRECTORY);
+
 	}
 
 	@AfterEach
 	public void tearDown() {
 		// Clean up after each test by deleting the test directory and its contents
-		FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
+		FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
+		FileUtils.recursiveDelete(DirectoryPath.TEST_LOGS_DIRECTORY);
+		FileUtils.recursiveDelete(DirectoryPath.TEST_QR_CODE_DIRECTORY);
 	}
 
 	@Test
@@ -67,8 +71,6 @@ class TwoFactorAuthenticationServiceTest {
 		File file = new File(filePath);
 		assertTrue(file.exists(), "QR Code image file was not created.");
 
-		// Cleanup
-//		Files.delete(Paths.get(filePath));
 	}
 
 	@Test

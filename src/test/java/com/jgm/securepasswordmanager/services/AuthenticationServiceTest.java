@@ -20,13 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthenticationServiceTest {
 
     private AuthenticationService authService;
-    private final File userDataDirectory = new File("user_data");
 
     @BeforeEach
     void setUp() {
         authService = new AuthenticationService();
 
-        UserDataService.createAllProgramDirectories();
+        FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
+
+        UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_USERS_DIRECTORY);
+        UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_LOGS_DIRECTORY);
+        LogParserService.setLogFilePath(DirectoryPath.TEST_LOGS_DIRECTORY + "/securepasswordmanager.log"); ;
+        UserDataService.setTheUserDataDirectoryPath(DirectoryPath.TEST_USERS_DIRECTORY);
+        UserDataService.createDirectoryIfNotExists(DirectoryPath.TEST_QR_CODE_DIRECTORY);
 
 
         // Simulate UserDataService by directly manipulating test data
@@ -40,11 +45,15 @@ class AuthenticationServiceTest {
 
     }
 
-//    @AfterEach
-//    public void tearDown() {
-//        // Clean up after each test by deleting the test directory and its contents
-//        FileUtils.recursiveDelete(DirectoryPath.USERS_DIRECTORY);
-//    }
+    @AfterEach
+    public void tearDown() {
+        // Clean up after each test by deleting the test directory and its contents
+        // Clean up after each test by deleting the test directory and its contents
+        FileUtils.recursiveDelete(DirectoryPath.TEST_USERS_DIRECTORY);
+        FileUtils.recursiveDelete(DirectoryPath.TEST_LOGS_DIRECTORY);
+        FileUtils.recursiveDelete(DirectoryPath.TEST_QR_CODE_DIRECTORY);
+
+    }
 
     @Test
     void testLoginSuccess() {
