@@ -17,7 +17,7 @@
                     <Font name="System Bold" size="18.0" />
                 </font>
             </Label>
-            <Label text="Butler Cyber Technologies Inc." BorderPane.alignment="CENTER" />
+            <Label text="Team JKL Solutions" BorderPane.alignment="CENTER" />
             <Separator maxWidth="225.0" orientation="HORIZONTAL" prefWidth="350.0" />
         </VBox>
     </top>

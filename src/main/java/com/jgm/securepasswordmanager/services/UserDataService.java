@@ -133,6 +133,10 @@ public class UserDataService {
     }
 
     // Encrypts the user's account password using a predefined secret key and salt.
+    // Note in reality this would not use a plaintext key of "secretkey". In a real deployment
+    // the secret key would be stored on a secure server, encrypted and then decrypted when used as the secret key.
+    // Or a service like Azure Key Vault would be used for key management.
+    // Furthermore a plaintext salt would not be used, instead something more dynamic like system time, a UUID, etc.
     private static void encryptUserAccountPassword(User user) {
         user.setPassword(EncryptionService.encrypt(user.getPassword(),"secretkey", "somerandomsalt"));
     }

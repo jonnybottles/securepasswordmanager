@@ -147,6 +147,6 @@ public class LoginController {
     @FXML
     protected void handleForgotPasswordButtonClicked() {
         // Intentionally left blank or implement forgotten password functionality here.
-        System.out.println("Forgot Password feature is not implemented.");
+        System.out.println("");
     }
 }
